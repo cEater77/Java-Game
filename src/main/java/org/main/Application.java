@@ -12,6 +12,7 @@ public class Application {
         System.out.println("Initializing App...");
         window = new Window(800, 800, "Java Game");
         GL.createCapabilities();
+        //test
     }
 
     public void run() {
