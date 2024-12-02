@@ -9,7 +9,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class Application {
 
     public void init() {
-        System.out.println("Initializing App...");
+        System.out.println("Initializing App");
         window = new Window(800, 800, "Java Game");
         GL.createCapabilities();
         //test
@@ -29,7 +29,7 @@ public class Application {
     }
 
     public void deinit() {
-        System.out.println("Deinitializing App...");
+        System.out.println("Deinitializing App");
         window.close();
     }
 
