@@ -1,6 +1,9 @@
 package Engine;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.opengl.GL33;
+import org.lwjgl.opengl.GL33;
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -57,6 +60,17 @@ public class Window {
 
     public void close(){
         glfwSetWindowShouldClose(nativeWindow, true);
+    }
+
+    public void update()
+    {
+        int[] temp_width = new int[1], temp_height = new int[1];
+        glfwGetWindowSize(nativeWindow, temp_width, temp_height);
+        width = temp_width[0];
+        height = temp_height[0];
+        GL33.glViewport(0,0, width, height);
+        glfwSwapBuffers(nativeWindow);
+        glfwPollEvents();
     }
 
     private int width, height;
