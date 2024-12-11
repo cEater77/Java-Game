@@ -1,10 +1,11 @@
 #version 330
 
+layout (binding=0) uniform sampler2D textureAtlas;
 in vec2 tex;
 
 out vec4 fragColor;
 
 void main()
 {
-    fragColor = vec4(1.0f,0.0f,0.0f,1.0f);
+    fragColor = texture(textureAtlas, tex);
 }

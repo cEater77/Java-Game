@@ -40,14 +40,13 @@ public class Renderer {
 
     public void renderTile(Vector2f pos, Vector2f size)
     {
-        vertices.add(new Vertex(new Vector2f(pos), new Vector2f(0.0f)));
-        vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y), new Vector2f(0.0f)));
-        vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y + size.y), new Vector2f(0.0f)));
+        vertices.add(new Vertex(new Vector2f(pos), new Vector2f(0.0f, 1.0f)));
+        vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y), new Vector2f(1.0f,1.0f)));
+        vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y + size.y), new Vector2f(1.0f,0.0f)));
 
-        vertices.add(new Vertex(new Vector2f(pos), new Vector2f(0.0f)));
-        vertices.add(new Vertex(new Vector2f(pos.x, pos.y + size.y), new Vector2f(0.0f)));
-        vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y + size.y), new Vector2f(0.0f)));
-
+        vertices.add(new Vertex(new Vector2f(pos), new Vector2f(0.0f,1.0f)));
+        vertices.add(new Vertex(new Vector2f(pos.x, pos.y + size.y), new Vector2f(0.0f, 0.0f)));
+        vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y + size.y), new Vector2f(1.0f,0.0f)));
     }
 
     public void renderBackground()
@@ -64,6 +63,7 @@ public class Renderer {
             // Get the window size
             GLFW.glfwGetWindowSize(Window.nativeWindow, width, height);
             shader.setUniform("projection", new Matrix4f().ortho2D(0,width.get(0),0,height.get(0)));
+            shader.setUniform("textureAtlas",0);
         }
         if (!vertices.isEmpty()) {
             try (MemoryStack stack = MemoryStack.stackPush()) {

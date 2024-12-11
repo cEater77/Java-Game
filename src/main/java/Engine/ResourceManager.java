@@ -6,8 +6,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.json.*;
 
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
@@ -16,6 +19,8 @@ import org.lwjgl.system.MemoryStack;
 public class ResourceManager {
 
     private final Map<String, Shader> shaders = new HashMap<String, Shader>();
+    private final Map<String, Texture> textures = new HashMap<String, Texture>();
+
     private int textureAtlasID;
 
     public void init()
@@ -24,20 +29,19 @@ public class ResourceManager {
         int width, height;
         try (MemoryStack stack = MemoryStack.stackPush()) {
             // Load the image file into a ByteBuffer
-            imageBuffer = STBImage.stbi_load("assets/texture/texture_atlas.png", stack.mallocInt(1), stack.mallocInt(1), stack.mallocInt(1), 4);
+            IntBuffer widthBuffer = stack.mallocInt(1), heightBuffer = stack.mallocInt(1), channelBuffer = stack.mallocInt(1);
+            imageBuffer = STBImage.stbi_load("assets/texture/texture_atlas.png", widthBuffer, heightBuffer, channelBuffer, 4);
             if (imageBuffer == null) {
                 throw new RuntimeException("Failed to load texture atlas");
             }
-
-            // Get the width and height of the image
-            width = stack.mallocInt(1).get(0);
-            height = stack.mallocInt(1).get(0);
+            width = widthBuffer.get();
+            height = heightBuffer.get();
         }
 
         // Generate a new texture ID
         textureAtlasID = GL33.glGenTextures();
-        GL33.glBindTexture(GL33.GL_TEXTURE_2D, textureAtlasID);
         GL33.glActiveTexture(GL33.GL_TEXTURE0 + 0);
+        GL33.glBindTexture(GL33.GL_TEXTURE_2D, textureAtlasID);
         // Set texture parameters (wrapping and filtering)
         GL33.glTexParameteri(GL33.GL_TEXTURE_2D, GL33.GL_TEXTURE_WRAP_S, GL33.GL_REPEAT);
         GL33.glTexParameteri(GL33.GL_TEXTURE_2D, GL33.GL_TEXTURE_WRAP_T, GL33.GL_REPEAT);
@@ -47,31 +51,22 @@ public class ResourceManager {
         // Load the image data into the texture
         GL33.glTexImage2D(GL33.GL_TEXTURE_2D, 0, GL33.GL_RGBA, width, height, 0, GL33.GL_RGBA, GL33.GL_UNSIGNED_BYTE, imageBuffer);
 
-        // Generate MipMaps
-        GL33.glGenerateMipmap(GL33.GL_TEXTURE_2D);
+        GL33.glActiveTexture(GL33.GL_TEXTURE0 + 15);
+        GL33.glBindTexture(GL33.GL_TEXTURE_2D, 0);
+
+        JSONArray textureDefs = new JSONObject(getStringFromFile("assets/texture/textureDefs.json")).getJSONArray("texture_defs");
+        for(int i = 0; i < textureDefs.length(); i++)
+        {
+
+        }
+
     }
 
     public void loadShader(String name, String vertexPath, String fragmentPath)
     {
-        String vertexCode = "";
-        try (BufferedReader reader = new BufferedReader(new FileReader(vertexPath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                vertexCode = vertexCode.concat(line + '\n');
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String vertexCode = getStringFromFile(vertexPath);
 
-        String fragmentCode = "";
-        try (BufferedReader reader = new BufferedReader(new FileReader(fragmentPath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                fragmentCode = fragmentCode.concat(line + '\n');
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String fragmentCode = getStringFromFile(fragmentPath);
 
         this.shaders.putIfAbsent(name, new Shader(vertexCode, fragmentCode));
     }
@@ -79,6 +74,17 @@ public class ResourceManager {
     public Shader getShader(String name)
     {
         return this.shaders.get(name);
+    }
+
+    private String getStringFromFile(String path)
+    {
+        String content = "";
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            content = reader.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return content;
     }
 
 }

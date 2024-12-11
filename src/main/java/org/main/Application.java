@@ -35,7 +35,7 @@ public class Application {
     public void run() {
         System.out.println("Running App...");
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         while (!glfwWindowShouldClose(window.getNativeWindow())) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
