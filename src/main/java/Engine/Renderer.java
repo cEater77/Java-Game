@@ -1,12 +1,21 @@
 package Engine;
 
+import org.joml.Matrix4d;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL33;
 import org.lwjgl.system.MemoryStack;
 import java.util.*;
 
-import java.nio.FloatBuffer;
+import java.nio.*;
 
 public class Renderer {
+
+    public Renderer()
+    {
+        vertices = new ArrayList<Vertex>();
+    }
 
     public void init(Shader shader)
     {
@@ -19,9 +28,9 @@ public class Renderer {
         vbo = GL33.glGenBuffers();
         GL33.glBindBuffer(GL33.GL_ARRAY_BUFFER, vbo);
 
-        GL33.glVertexAttribPointer(0, 3, GL33.GL_FLOAT, false, 5 * Float.BYTES, 0); // Position
+        GL33.glVertexAttribPointer(0, 2, GL33.GL_FLOAT, false, Vertex.VERTEX_SIZE * Float.BYTES, 0); // Position
         GL33.glEnableVertexAttribArray(0);
-        GL33.glVertexAttribPointer(1, 2, GL33.GL_FLOAT, false, 5 * Float.BYTES, 3 * Float.BYTES); // Texture
+        GL33.glVertexAttribPointer(1, 2, GL33.GL_FLOAT, false, Vertex.VERTEX_SIZE * Float.BYTES, 2 * Float.BYTES); // Texture
         GL33.glEnableVertexAttribArray(1);
 
         // Unbind the VAO and VBO
@@ -29,8 +38,15 @@ public class Renderer {
         GL33.glBindBuffer(GL33.GL_ARRAY_BUFFER, 0);
     }
 
-    public void renderTile()
+    public void renderTile(Vector2f pos, Vector2f size)
     {
+        vertices.add(new Vertex(new Vector2f(pos), new Vector2f(0.0f)));
+        vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y), new Vector2f(0.0f)));
+        vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y + size.y), new Vector2f(0.0f)));
+
+        vertices.add(new Vertex(new Vector2f(pos), new Vector2f(0.0f)));
+        vertices.add(new Vertex(new Vector2f(pos.x, pos.y + size.y), new Vector2f(0.0f)));
+        vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y + size.y), new Vector2f(0.0f)));
 
     }
 
@@ -41,12 +57,22 @@ public class Renderer {
     public void renderBatch()
     {
         shader.use();
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer width = stack.mallocInt(1); // Buffer to store the width
+            IntBuffer height = stack.mallocInt(1); // Buffer to store the height
 
-        if (vertices.size() > 0) {
+            // Get the window size
+            GLFW.glfwGetWindowSize(Window.nativeWindow, width, height);
+            shader.setUniform("projection", new Matrix4f().ortho2D(0,width.get(0),0,height.get(0)));
+        }
+        if (!vertices.isEmpty()) {
             try (MemoryStack stack = MemoryStack.stackPush()) {
-                FloatBuffer buffer = stack.mallocFloat(vertices.size());
-                for (Float vertex : vertices) {
-                    buffer.put(vertex);
+                FloatBuffer buffer = stack.mallocFloat(vertices.size() * Vertex.VERTEX_SIZE);
+                for (Vertex vertex : vertices) {
+                    buffer.put(vertex.position.x);
+                    buffer.put(vertex.position.y);
+                    buffer.put(vertex.uv.x);
+                    buffer.put(vertex.uv.y);
                 }
                 buffer.flip();
 
@@ -56,17 +82,15 @@ public class Renderer {
 
                 // Draw the batch
                 GL33.glBindVertexArray(vao);
-                GL33.glDrawArrays(GL33.GL_TRIANGLES, 0, vertices.size() / 5);
+                GL33.glDrawArrays(GL33.GL_TRIANGLES, 0, vertices.size());
                 GL33.glBindVertexArray(0);
             }
         }
         vertices.clear();
     }
 
-    private static final int MAX_BATCH_SIZE = 1002;
-
     private int vao;
     private int vbo;
     private Shader shader;
-    private List<Float> vertices;
+    private List<Vertex> vertices;
 }

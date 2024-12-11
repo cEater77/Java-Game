@@ -1,10 +1,14 @@
 package Engine;
 
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL33;
 import org.lwjgl.opengl.GL33;
 
-import java.nio.FloatBuffer;
+import org.lwjgl.system.MemoryUtil.*;
 import org.lwjgl.system.MemoryStack;
+
+import java.util.*;
+import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL33.*;
 import static org.lwjgl.opengl.GL33.*;
@@ -72,12 +76,15 @@ public class Shader {
     }
 
     // Set a 4x4 matrix uniform
-    public void setUniform(String name, FloatBuffer matrix) {
+    public void setUniform(String name, Matrix4f matrix) {
         int location = GL33.glGetUniformLocation(programID, name);
         if (location == -1) {
             System.err.println("Warning: Uniform '" + name + "' not found in shader.");
         }
-        GL33.glUniformMatrix4fv(location, false, matrix);
+        MemoryStack stack = MemoryStack.stackPush();
+        FloatBuffer buffer = stack.mallocFloat(16);
+        matrix.get(buffer);
+        GL33.glUniformMatrix4fv(location, false, buffer);
     }
 
     // Clean up the shader program

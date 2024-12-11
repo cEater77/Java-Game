@@ -75,5 +75,5 @@ public class Window {
 
     private int width, height;
     private String title;
-    private long nativeWindow;
+    public static long nativeWindow;
 }

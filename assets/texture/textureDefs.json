@@ -1,0 +1,10 @@
+[
+  {
+    "name": "grass",
+    "position": [0,0]
+  },
+  {
+    "name": "stone",
+    "position": [32,0]
+  }
+]
