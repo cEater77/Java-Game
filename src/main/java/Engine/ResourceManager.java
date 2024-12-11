@@ -1,12 +1,16 @@
 package Engine;
 
+import org.joml.Vector2f;
 import org.lwjgl.opengl.GL33;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +18,9 @@ import org.json.*;
 
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
+import org.w3c.dom.Text;
+
+import java.nio.file.*;
 
 
 public class ResourceManager {
@@ -30,6 +37,7 @@ public class ResourceManager {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             // Load the image file into a ByteBuffer
             IntBuffer widthBuffer = stack.mallocInt(1), heightBuffer = stack.mallocInt(1), channelBuffer = stack.mallocInt(1);
+            STBImage.nstbi_set_flip_vertically_on_load(1);
             imageBuffer = STBImage.stbi_load("assets/texture/texture_atlas.png", widthBuffer, heightBuffer, channelBuffer, 4);
             if (imageBuffer == null) {
                 throw new RuntimeException("Failed to load texture atlas");
@@ -54,12 +62,13 @@ public class ResourceManager {
         GL33.glActiveTexture(GL33.GL_TEXTURE0 + 15);
         GL33.glBindTexture(GL33.GL_TEXTURE_2D, 0);
 
-        JSONArray textureDefs = new JSONObject(getStringFromFile("assets/texture/textureDefs.json")).getJSONArray("texture_defs");
-        for(int i = 0; i < textureDefs.length(); i++)
-        {
-
+        JSONArray textureDefs = new JSONObject(getStringFromFile("assets/texture/textureDefs.json")).getJSONArray("textures");
+        for (int i = 0; i < textureDefs.length(); i++) {
+            JSONObject texture = textureDefs.getJSONObject(i);
+            Vector2f uvPos = new Vector2f((float) texture.getJSONArray("position").getInt(0) / width, (float) texture.getJSONArray("position").getInt(1) / height );
+            Vector2f uvSize = new Vector2f((float)Texture.DEFAULT_TEXTURE_WIDTH / width, (float)Texture.DEFAULT_TEXTURE_HEIGHT / height);
+            this.textures.put(texture.getString("name"), new Texture(uvPos, uvSize));
         }
-
     }
 
     public void loadShader(String name, String vertexPath, String fragmentPath)
@@ -75,16 +84,16 @@ public class ResourceManager {
     {
         return this.shaders.get(name);
     }
+    public Texture getTexture(String name){return this.textures.get(name);}
 
     private String getStringFromFile(String path)
     {
-        String content = "";
-        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-            content = reader.toString();
+        try {
+            return new String(Files.readAllBytes(Paths.get(path)));
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
-        return content;
     }
 
 }

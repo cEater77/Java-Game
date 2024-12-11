@@ -19,6 +19,7 @@ public class Shader {
     // Constructor accepts the source code of the vertex and fragment shaders
     public Shader(String vertexSource, String fragmentSource) {
         // Compile shaders and link the program
+
         int vertexShaderID = compileShader(vertexSource, GL33.GL_VERTEX_SHADER);
         int fragmentShaderID = compileShader(fragmentSource, GL33.GL_FRAGMENT_SHADER);
 

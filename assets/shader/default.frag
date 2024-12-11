@@ -1,4 +1,4 @@
-#version 330
+#version 430
 
 layout (binding=0) uniform sampler2D textureAtlas;
 in vec2 tex;

@@ -1,14 +1,14 @@
 {
-  "texture_defs":[
+  "textures":[
   {
-    "name": "grass",
+    "name": "stone",
     "position": [
       0,
       0
     ]
   },
   {
-    "name": "stone",
+    "name": "grass",
     "position": [
       32,
       0

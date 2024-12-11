@@ -38,15 +38,15 @@ public class Renderer {
         GL33.glBindBuffer(GL33.GL_ARRAY_BUFFER, 0);
     }
 
-    public void renderTile(Vector2f pos, Vector2f size)
+    public void renderTile(Vector2f pos, Vector2f size, Texture texture)
     {
-        vertices.add(new Vertex(new Vector2f(pos), new Vector2f(0.0f, 1.0f)));
-        vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y), new Vector2f(1.0f,1.0f)));
-        vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y + size.y), new Vector2f(1.0f,0.0f)));
+        vertices.add(new Vertex(new Vector2f(pos), new Vector2f(texture.uvPosition)));
+        vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y), new Vector2f(texture.uvPosition.x + texture.uvSize.x, texture.uvPosition.y)));
+        vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y + size.y), new Vector2f(texture.uvPosition.x + texture.uvSize.x, texture.uvPosition.y + texture.uvSize.y)));
 
-        vertices.add(new Vertex(new Vector2f(pos), new Vector2f(0.0f,1.0f)));
-        vertices.add(new Vertex(new Vector2f(pos.x, pos.y + size.y), new Vector2f(0.0f, 0.0f)));
-        vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y + size.y), new Vector2f(1.0f,0.0f)));
+        vertices.add(new Vertex(new Vector2f(pos), new Vector2f(texture.uvPosition)));
+        vertices.add(new Vertex(new Vector2f(pos.x, pos.y + size.y), new Vector2f(texture.uvPosition.x, texture.uvPosition.y + texture.uvSize.y)));
+        vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y + size.y), new Vector2f(texture.uvPosition.x + texture.uvSize.x, texture.uvPosition.y + texture.uvSize.y)));
     }
 
     public void renderBackground()

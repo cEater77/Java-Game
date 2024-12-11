@@ -35,14 +35,16 @@ public class Application {
     public void run() {
         System.out.println("Running App...");
 
+        GL33.glEnable(GL33.GL_BLEND);
+        GL33.glBlendFunc(GL33.GL_SRC_ALPHA, GL33.GL_ONE_MINUS_SRC_ALPHA);
         glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         while (!glfwWindowShouldClose(window.getNativeWindow())) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             resourceManager.getShader("default").use();
 
-            renderer.renderTile(new Vector2f(100.0f,100.0f), new Vector2f(50.0f,50.0f));
-            renderer.renderTile(new Vector2f(100.0f,0.0f), new Vector2f(50.0f,25.0f));
+            renderer.renderTile(new Vector2f(100.0f,120.0f), new Vector2f(50.0f,50.0f), resourceManager.getTexture("grass"));
+            renderer.renderTile(new Vector2f(100.0f,0.0f), new Vector2f(50.0f,50.0f), resourceManager.getTexture("stone"));
 
             renderer.renderBatch();
             window.update();
