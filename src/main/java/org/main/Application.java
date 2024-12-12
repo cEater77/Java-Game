@@ -4,6 +4,7 @@ import Engine.Renderer;
 import Engine.ResourceManager;
 import Engine.Shader;
 import Engine.Window;
+import imgui.ImGui;
 import org.joml.Vector2f;
 import org.lwjgl.nuklear.*;
 import org.lwjgl.opengl.*;
@@ -30,6 +31,9 @@ public class Application {
 
         renderer = new Renderer();
         renderer.init(resourceManager.getShader("default"));
+
+        uiManager = new UIManager();
+        uiManager.init(window.getNativeWindow());
     }
 
     public void run() {
@@ -43,10 +47,12 @@ public class Application {
 
             resourceManager.getShader("default").use();
 
-            renderer.renderTile(new Vector2f(100.0f,120.0f), new Vector2f(50.0f,50.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector2f(100.0f,0.0f), new Vector2f(50.0f,50.0f), resourceManager.getTexture("stone"));
+            renderer.renderTile(new Vector2f(100.0f,120.0f), new Vector2f(100.0f,100.0f), resourceManager.getTexture("grass"));
+            renderer.renderTile(new Vector2f(100.0f,0.0f), new Vector2f(100.0f,100.0f), resourceManager.getTexture("stone"));
 
             renderer.renderBatch();
+
+            uiManager.update();
             window.update();
         }
     }
@@ -59,4 +65,5 @@ public class Application {
     private Window window;
     private ResourceManager resourceManager;
     private Renderer renderer;
+    private UIManager uiManager;
 }
