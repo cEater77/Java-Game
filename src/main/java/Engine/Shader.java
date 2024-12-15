@@ -4,6 +4,7 @@ import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL33;
 import org.lwjgl.opengl.GL33;
 
+import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.system.MemoryUtil.*;
 import org.lwjgl.system.MemoryStack;
 
@@ -15,6 +16,7 @@ import static org.lwjgl.opengl.GL33.*;
 
 public class Shader {
     private final int programID;
+    private Map<String, Integer> unifromLocationCache = new HashMap<>();
 
     // Constructor accepts the source code of the vertex and fragment shaders
     public Shader(String vertexSource, String fragmentSource) {
@@ -60,32 +62,50 @@ public class Shader {
 
     // Set an integer uniform variable
     public void setUniform(String name, int value) {
-        int location = GL33.glGetUniformLocation(programID, name);
-        if (location == -1) {
-            System.err.println("Warning: Uniform '" + name + "' not found in shader.");
+        if(!unifromLocationCache.containsKey(name)) {
+            int location = GL33.glGetUniformLocation(programID, name);
+            if (location == -1) {
+                System.err.println("Warning: Uniform '" + name + "' not found in shader.");
+                return;
+            }
+            unifromLocationCache.put(name, location);
         }
-        GL33.glUniform1i(location, value);
+
+        GL33.glUniform1i(unifromLocationCache.get(name), value);
     }
 
     // Set a float uniform variable
     public void setUniform(String name, float value) {
-        int location = GL33.glGetUniformLocation(programID, name);
-        if (location == -1) {
-            System.err.println("Warning: Uniform '" + name + "' not found in shader.");
+        if(!unifromLocationCache.containsKey(name)) {
+            int location = GL33.glGetUniformLocation(programID, name);
+            if (location == -1) {
+                System.err.println("Warning: Uniform '" + name + "' not found in shader.");
+                return;
+            }
+            unifromLocationCache.put(name, location);
         }
-        GL33.glUniform1f(location, value);
+
+        GL33.glUniform1f(unifromLocationCache.get(name), value);
     }
 
     // Set a 4x4 matrix uniform
     public void setUniform(String name, Matrix4f matrix) {
-        int location = GL33.glGetUniformLocation(programID, name);
-        if (location == -1) {
-            System.err.println("Warning: Uniform '" + name + "' not found in shader.");
+        if(!unifromLocationCache.containsKey(name)) {
+            int location = GL33.glGetUniformLocation(programID, name);
+            if (location == -1) {
+                System.err.println("Warning: Uniform '" + name + "' not found in shader.");
+                return;
+            }
+            unifromLocationCache.put(name, location);
         }
-        MemoryStack stack = MemoryStack.stackPush();
-        FloatBuffer buffer = stack.mallocFloat(16);
-        matrix.get(buffer);
-        GL33.glUniformMatrix4fv(location, false, buffer);
+
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(16);
+        try{
+            matrix.get(buffer);
+            GL33.glUniformMatrix4fv(unifromLocationCache.get(name), false, buffer);
+        } finally {
+            MemoryUtil.memFree(buffer);
+        }
     }
 
     // Clean up the shader program
@@ -96,7 +116,8 @@ public class Shader {
     }
 
     // Get the program ID (useful for debugging or other purposes)
-    public int getProgramID() {
+    private int getProgramID() {
         return programID;
     }
+
 }

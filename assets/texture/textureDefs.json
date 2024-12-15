@@ -1,17 +1,17 @@
 {
   "textures":[
   {
-    "name": "stone",
-    "position": [
-      0,
-      0
-    ]
-  },
-  {
     "name": "grass",
     "position": [
       32,
       0
+    ]
+  },
+  {
+    "name": "snow_grass",
+    "position": [
+      32,
+      128
     ]
   }
 ]

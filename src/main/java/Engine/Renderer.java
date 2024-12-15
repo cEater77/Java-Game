@@ -1,11 +1,13 @@
 package Engine;
 
-import org.joml.Matrix4d;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
+import org.joml.*;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL33;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
+import org.main.Application;
+
+import java.lang.Math;
 import java.util.*;
 
 import java.nio.*;
@@ -36,10 +38,21 @@ public class Renderer {
         // Unbind the VAO and VBO
         GL33.glBindVertexArray(0);
         GL33.glBindBuffer(GL33.GL_ARRAY_BUFFER, 0);
+
+        isometricMat.m00(-0.5f);   isometricMat.m10(0.5f);       isometricMat.m20(0);
+        isometricMat.m01(-0.25f);  isometricMat.m11(-0.25f);     isometricMat.m21(0.5f);
+        isometricMat.m02(0);       isometricMat.m12(0);          isometricMat.m22(0);
+
+        isometricMat.scale(75.0f);
     }
 
-    public void renderTile(Vector2f pos, Vector2f size, Texture texture)
+    public void renderTile(Vector3f pos, Vector2f size, Texture texture)
     {
+        isometricMat.transform(pos);
+        float windowWidth = (float)Application.window.getWidth();
+        float windowHeight = (float)Application.window.getHeight();
+
+        pos = new Vector3f(pos.x + windowWidth / 2.0f, pos.y + windowHeight, 0);
         vertices.add(new Vertex(new Vector2f(pos), new Vector2f(texture.uvPosition)));
         vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y), new Vector2f(texture.uvPosition.x + texture.uvSize.x, texture.uvPosition.y)));
         vertices.add(new Vertex(new Vector2f(pos.x + size.x, pos.y + size.y), new Vector2f(texture.uvPosition.x + texture.uvSize.x, texture.uvPosition.y + texture.uvSize.y)));
@@ -66,8 +79,8 @@ public class Renderer {
             shader.setUniform("textureAtlas",0);
         }
         if (!vertices.isEmpty()) {
-            try (MemoryStack stack = MemoryStack.stackPush()) {
-                FloatBuffer buffer = stack.mallocFloat(vertices.size() * Vertex.VERTEX_SIZE);
+            FloatBuffer buffer = MemoryUtil.memAllocFloat(vertices.size() * Vertex.VERTEX_SIZE);
+            try {
                 for (Vertex vertex : vertices) {
                     buffer.put(vertex.position.x);
                     buffer.put(vertex.position.y);
@@ -84,6 +97,8 @@ public class Renderer {
                 GL33.glBindVertexArray(vao);
                 GL33.glDrawArrays(GL33.GL_TRIANGLES, 0, vertices.size());
                 GL33.glBindVertexArray(0);
+            } finally {
+                MemoryUtil.memFree(buffer); // Free the buffer after use
             }
         }
         vertices.clear();
@@ -93,4 +108,5 @@ public class Renderer {
     private int vbo;
     private Shader shader;
     private List<Vertex> vertices;
+    private final Matrix3f isometricMat = new Matrix3f();
 }
