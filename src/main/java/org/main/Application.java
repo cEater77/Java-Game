@@ -50,31 +50,9 @@ public class Application {
 
             for (int i = 0; i < 25; i++) {
                 for (int j = 0; j < 25; j++) {
-                    renderer.renderTile(new Vector3f(2.0f + (float) j, 2.0f + (float) i, 0.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
+                    renderer.renderTile(new Vector3f(2.0f + (float) j, 2.0f + (float) i, 0.0f), resourceManager.getTexture("grass"));
                 }
             }
-
-            renderer.renderTile(new Vector3f(2.0f, 2.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(2.0f, 3.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(2.0f, 4.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(2.0f, 5.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(2.0f, 6.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(2.0f, 7.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(2.0f, 8.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(2.0f, 9.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(2.0f, 10.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(2.0f, 11.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-
-
-            renderer.renderTile(new Vector3f(4.0f, 2.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(4.0f, 3.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(4.0f, 4.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(4.0f, 5.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(4.0f, 6.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(4.0f, 7.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(4.0f, 8.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-            renderer.renderTile(new Vector3f(4.0f, 9.0f, 1.0f), new Vector2f(75.0f, 75.0f), resourceManager.getTexture("grass"));
-
 
             renderer.renderBatch();
 

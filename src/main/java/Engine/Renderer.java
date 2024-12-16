@@ -46,8 +46,9 @@ public class Renderer {
         isometricMat.scale(75.0f);
     }
 
-    public void renderTile(Vector3f pos, Vector2f size, Texture texture)
+    public void renderTile(Vector3f pos, Texture texture)
     {
+        Vector2f size = new Vector2f(75.0f, 75.0f);
         isometricMat.transform(pos);
         float windowWidth = (float)Application.window.getWidth();
         float windowHeight = (float)Application.window.getHeight();
