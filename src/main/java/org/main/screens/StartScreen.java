@@ -1,9 +1,9 @@
 package org.main.screens;
 
 import imgui.ImGui;
-import org.main.Application;
+import org.main.Game;
 
-public class StartScreen implements Screen {
+public class StartScreen implements IScreen {
     @Override
     public void update(){
 
@@ -14,7 +14,7 @@ public class StartScreen implements Screen {
         ImGui.begin("StartScreen");
         ImGui.text("hello");
         if(ImGui.button("Start Game"))
-            Application.uiManager.pushScreen(new HUDScreen());
+            Game.uiManager.pushScreen(new HUDScreen());
         ImGui.end();
     }
 

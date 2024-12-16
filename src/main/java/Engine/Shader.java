@@ -1,6 +1,9 @@
 package Engine;
 
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL33;
 import org.lwjgl.opengl.GL33;
 
@@ -106,6 +109,51 @@ public class Shader {
         } finally {
             MemoryUtil.memFree(buffer);
         }
+    }
+
+    public void setUniform(String name, Vector3f value) {
+        if(!unifromLocationCache.containsKey(name)) {
+            int location = GL33.glGetUniformLocation(programID, name);
+            if (location == -1) {
+                System.err.println("Warning: Uniform '" + name + "' not found in shader.");
+                return;
+            }
+            unifromLocationCache.put(name, location);
+        }
+
+        GL33.glUniform3f(unifromLocationCache.get(name), value.x, value.y, value.z);
+    }
+
+    public void setUniform(String name, Matrix3f matrix) {
+        if(!unifromLocationCache.containsKey(name)) {
+            int location = GL33.glGetUniformLocation(programID, name);
+            if (location == -1) {
+                System.err.println("Warning: Uniform '" + name + "' not found in shader.");
+                return;
+            }
+            unifromLocationCache.put(name, location);
+        }
+
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(9);
+        try{
+            matrix.get(buffer);
+            GL33.glUniformMatrix3fv(unifromLocationCache.get(name), false, buffer);
+        } finally {
+            MemoryUtil.memFree(buffer);
+        }
+    }
+
+    public void setUniform(String name, Vector2f value) {
+        if(!unifromLocationCache.containsKey(name)) {
+            int location = GL33.glGetUniformLocation(programID, name);
+            if (location == -1) {
+                System.err.println("Warning: Uniform '" + name + "' not found in shader.");
+                return;
+            }
+            unifromLocationCache.put(name, location);
+        }
+
+        GL33.glUniform2f(unifromLocationCache.get(name), value.x, value.y);
     }
 
     // Clean up the shader program

@@ -4,7 +4,7 @@ import imgui.ImGui;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 import imgui.internal.ImGuiContext;
-import org.main.screens.Screen;
+import org.main.screens.IScreen;
 import org.main.screens.StartScreen;
 
 import java.util.Stack;
@@ -28,8 +28,8 @@ public class UIManager {
 
         if(!screens.isEmpty())
         {
-            Screen currentScreen = screens.peek();
-            currentScreen.resize(Application.window.getWidth(), Application.window.getHeight());
+            IScreen currentScreen = screens.peek();
+            currentScreen.resize(Game.window.getWidth(), Game.window.getHeight());
             currentScreen.update();
             currentScreen.render();
         }
@@ -40,7 +40,7 @@ public class UIManager {
         glImpl.renderDrawData(ImGui.getDrawData());
     }
 
-    public void pushScreen(Screen screen)
+    public void pushScreen(IScreen screen)
     {
         screens.push(screen);
     }
@@ -53,5 +53,5 @@ public class UIManager {
     private ImGuiContext uiContext;
     private final ImGuiImplGlfw glfwImpl = new ImGuiImplGlfw();
     private final ImGuiImplGl3 glImpl = new ImGuiImplGl3();
-    private Stack<Screen> screens = new Stack<Screen>();
+    private Stack<IScreen> screens = new Stack<IScreen>();
 }

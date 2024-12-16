@@ -1,9 +1,9 @@
 package org.main.screens;
 
 import imgui.ImGui;
-import org.main.Application;
+import org.main.Game;
 
-public class HUDScreen implements Screen {
+public class HUDScreen implements IScreen {
 
     @Override
     public void update() {
@@ -14,7 +14,7 @@ public class HUDScreen implements Screen {
     public void render() {
         ImGui.begin("HUD Screen");
         if(ImGui.button("Leave Game"))
-            Application.uiManager.popScreen();
+            Game.uiManager.popScreen();
         ImGui.end();
     }
 

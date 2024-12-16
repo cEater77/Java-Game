@@ -3,13 +3,15 @@ package Engine;
 import org.joml.*;
 
 public class Vertex {
-    Vertex(Vector2f pos, Vector2f uv)
+    Vertex(Vector3f position, Vector2f offset, Vector2f uv)
     {
-        position = pos;
+        this.position = position;
         this.uv = uv;
+        this.offset = offset;
     }
-    public Vector2f position;
+    public Vector3f position;
+    public Vector2f offset;
     public Vector2f uv;
 
-    public final static int VERTEX_SIZE = 4;
+    public final static int VERTEX_SIZE = 7;
 }
