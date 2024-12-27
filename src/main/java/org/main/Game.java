@@ -27,29 +27,19 @@ public class Game {
 
         uiManager = new UIManager();
         uiManager.init(window.getNativeWindow());
-
-        camera = new Camera(new Vector3f(0.0f, 0.0f, 0.0f));
-        camera.init();
     }
 
     public void run() {
         System.out.println("Running App...");
 
+        World world = new World(renderer, resourceManager);
+
         while (!glfwWindowShouldClose(window.getNativeWindow())) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            //renderer.renderBackground();
-            for (int i = -12; i < 13; i++) {
-                for (int j = -12; j < 13; j++) {
-                    renderer.renderTile(new Vector3f(2.0f + (float) j, 2.0f + (float) i, 0.0f), resourceManager.getTexture("grass"));
-                }
-            }
+            world.tick();
 
-            renderer.renderSprite(camera.getIsometricPosition().negate(), new Vector2f(20.0f), resourceManager.getTexture("snow_grass"));
-
-            camera.update();
             renderer.renderBatch();
-
             uiManager.update();
             window.update();
         }
@@ -64,5 +54,4 @@ public class Game {
     private ResourceManager resourceManager;
     private Renderer renderer;
     public static UIManager uiManager;
-    public static Camera camera;
 }

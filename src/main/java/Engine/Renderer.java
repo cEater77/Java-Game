@@ -101,7 +101,6 @@ public class Renderer {
             shader.setUniform("projection", new Matrix4f().ortho2D(0,width.get(0),0,height.get(0)));
             shader.setUniform("textureAtlas",0);
             shader.setUniform("isometricView",isometricMat);
-            shader.setUniform("camPos", Game.camera.getIsometricPosition());
             shader.setUniform("worldOrigin", new Vector2f(width.get(0) / 2.0f, height.get(0) / 2.0f));
         }
         if (!vertices.isEmpty()) {
@@ -142,5 +141,5 @@ public class Renderer {
     private Shader shader;
     private List<Vertex> vertices;
     private final Matrix3f isometricMat = new Matrix3f();
-    private final float TILE_SIZE = 75.0f;
+    private final float TILE_SIZE = 80.0f;
 }
