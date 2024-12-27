@@ -14,7 +14,7 @@ public class Entity {
     public Entity(Vector3f position, Texture texture)
     {
         this.position = position;
-        this.aabb = new AABB(new Vector2f(position), new Vector2f(75.0f, 37.5f));
+        this.aabb = new AABB(new Vector2f(position.x - 0.5f, position.y - 0.5f), new Vector2f(position.x + 0.5f, position.y + 0.5f));
         this.texture = texture;
     }
 
@@ -25,7 +25,7 @@ public class Entity {
 
     public void onCollision(Entity other)
     {
-
+        System.out.println("i got hit by: " + other.toString());
     }
 
     public EntityType getType()
@@ -36,9 +36,16 @@ public class Entity {
     public void setPosition(Vector3f position)
     {
         this.position = position;
+        aabb.min = new Vector2f(position.x - 0.5f, position.y - 0.5f);
+        aabb.max = new Vector2f(position.x + 0.5f, position.y + 0.5f);
     }
 
     public Vector3f getPosition() {
         return position;
+    }
+
+    public AABB getAABB()
+    {
+        return aabb;
     }
 }

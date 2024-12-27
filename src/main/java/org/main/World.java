@@ -3,6 +3,7 @@ package org.main;
 import Engine.Camera;
 import Engine.Renderer;
 import Engine.ResourceManager;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.main.entities.Entity;
@@ -23,13 +24,14 @@ public class World {
         this.renderer = renderer;
         this.resourceManager = resourceManager;
 
+        entities.add(new Entity(new Vector3f(20.0f, 0.0f,0.0f), null));
         entities.add(new Player(new Vector3f(0.0f), null));
     }
 
     public void tick() {
-        draw();
         handleCollision();
         handleInput();
+        draw();
     }
 
     private void draw()
@@ -40,12 +42,27 @@ public class World {
             }
         }
 
+        for(Entity e : entities) {
+            renderer.renderSprite(new Vector3f(e.getPosition()).negate(), new Vector2f(75.0f), resourceManager.getTexture("snow_grass"));
+        }
+
         renderer.getShader().setUniform("camPos", camera.getIsometricPosition());
     }
 
     private void handleCollision()
     {
-
+        for(Entity e : entities) {
+            for(Entity e2 : entities) {
+                if(e != e2)
+                {
+                    if(e.getAABB().isIntersecting(e2.getAABB()))
+                    {
+                        e.onCollision(e2);
+                        e2.onCollision(e);
+                    }
+                }
+            }
+        }
     }
 
     private void handleInput()

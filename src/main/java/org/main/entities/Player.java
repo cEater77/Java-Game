@@ -30,7 +30,8 @@ public class Player extends Entity {
     @Override
     public void onCollision(Entity other)
     {
-
+        Vector2f offset = aabb.getMinTranslationVector(other.getAABB());
+        setPosition(new Vector3f(-offset.x + position.x, -offset.y + position.y, 0));
     }
 
     public void move(List<MovementDirection> directions)
@@ -57,8 +58,7 @@ public class Player extends Entity {
 
         if(playerPositionDelta.x != 0.0f || playerPositionDelta.y != 0.0f)
             playerPositionDelta.normalize(speed);
-        position.x += playerPositionDelta.x;
-        position.y += playerPositionDelta.y;
+        setPosition(new Vector3f(playerPositionDelta.x + position.x, playerPositionDelta.y + position.y, 0.0f));
     }
 
     public float getSpeed() {
