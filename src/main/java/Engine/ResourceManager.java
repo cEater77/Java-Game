@@ -1,16 +1,13 @@
 package Engine;
 
+import Engine.renderer.Shader;
+import Engine.renderer.Texture;
 import org.joml.Vector2f;
 import org.lwjgl.opengl.GL33;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +15,6 @@ import org.json.*;
 
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
-import org.w3c.dom.Text;
 
 import java.nio.file.*;
 

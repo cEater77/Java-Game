@@ -1,31 +1,31 @@
 package org.main.entities;
 
-import Engine.Texture;
+import Engine.animation.AnimationController;
+import Engine.renderer.Texture;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.main.AABB;
+import Engine.AABB;
 
 public class Entity {
-    public int id;
-    Vector3f position;
-    AABB aabb;
-    Texture texture;
+    protected int id;
+    protected Vector3f position;
+    protected AABB aabb;
+    protected AnimationController animationController;
 
-    public Entity(Vector3f position, Texture texture)
+    public Entity(Vector3f position)
     {
         this.position = position;
         this.aabb = new AABB(new Vector2f(position.x - 0.5f, position.y - 0.5f), new Vector2f(position.x + 0.5f, position.y + 0.5f));
-        this.texture = texture;
     }
 
     public void update()
     {
-
+        if(animationController != null)
+            animationController.update();
     }
 
     public void onCollision(Entity other)
     {
-        System.out.println("i got hit by: " + other.toString());
     }
 
     public EntityType getType()
@@ -47,5 +47,14 @@ public class Entity {
     public AABB getAABB()
     {
         return aabb;
+    }
+
+    public void setAnimationController(AnimationController animationController) {
+        this.animationController = animationController;
+    }
+
+    public AnimationController getAnimationController()
+    {
+        return animationController;
     }
 }

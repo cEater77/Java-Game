@@ -1,8 +1,7 @@
 package org.main;
 
 import Engine.*;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
+import Engine.renderer.Renderer;
 import org.lwjgl.opengl.*;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -13,7 +12,7 @@ public class Game {
 
     public void init() {
 
-        System.out.println("Initializing App");
+        System.out.println("Initializing Game");
         window = new Window(800, 800, "Java Game");
         GL.createCapabilities();
 
@@ -30,11 +29,14 @@ public class Game {
     }
 
     public void run() {
-        System.out.println("Running App...");
+        System.out.println("Running Game...");
 
         World world = new World(renderer, resourceManager);
 
+        long timeBegin = 0;
+
         while (!glfwWindowShouldClose(window.getNativeWindow())) {
+
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             world.tick();
@@ -42,11 +44,12 @@ public class Game {
             renderer.renderBatch();
             uiManager.update();
             window.update();
+
         }
     }
 
     public void deinit() {
-        System.out.println("Deinitializing App");
+        System.out.println("Deinitializing Game");
         window.close();
     }
 

@@ -1,11 +1,11 @@
-package Engine;
+package Engine.renderer;
 
+import Engine.Window;
 import org.joml.*;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL33;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
-import org.main.Game;
 
 import java.util.*;
 

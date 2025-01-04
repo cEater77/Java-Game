@@ -1,4 +1,4 @@
-package org.main.entities;
+package org.main;
 
 public enum MovementDirection {
     NONE,

@@ -1,21 +1,15 @@
-package Engine;
+package Engine.renderer;
 
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL33;
-import org.lwjgl.opengl.GL33;
 
 import org.lwjgl.system.MemoryUtil;
-import org.lwjgl.system.MemoryUtil.*;
-import org.lwjgl.system.MemoryStack;
 
 import java.util.*;
 import java.nio.FloatBuffer;
-
-import static org.lwjgl.opengl.GL33.*;
-import static org.lwjgl.opengl.GL33.*;
 
 public class Shader {
     private final int programID;

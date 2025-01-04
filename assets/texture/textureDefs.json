@@ -1,18 +1,46 @@
 {
-  "textures":[
-  {
-    "name": "grass",
-    "position": [
-      32,
-      0
-    ]
-  },
-  {
-    "name": "snow_grass",
-    "position": [
-      32,
-      128
-    ]
-  }
-]
+  "textures": [
+    {
+      "name": "grass",
+      "position": [
+        32,
+        0
+      ]
+    },
+    {
+      "name": "snow_grass",
+      "position": [
+        32,
+        128
+      ]
+    },
+    {
+      "name": "wood",
+      "position": [
+        32,
+        160
+      ]
+    },
+    {
+      "name": "ice",
+      "position": [
+        64,
+        0
+      ]
+    },
+    {
+      "name": "dark_wood",
+      "position": [
+        64,
+        128
+      ]
+    },
+    {
+      "name": "dark_log",
+      "position": [
+        64,
+        160
+      ]
+    }
+  ]
 }

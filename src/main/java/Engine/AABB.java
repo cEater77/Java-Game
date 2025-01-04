@@ -1,4 +1,4 @@
-package org.main;
+package Engine;
 
 import org.joml.Vector2f;
 
@@ -33,14 +33,14 @@ public class AABB {
         }
 
         if (overlapX < overlapY) {
-            if (this.max.x > other.min.x) {
+            if (this.max.x > other.min.x && other.min.x > this.min.x) {
                 return new Vector2f(overlapX, 0);
             } else {
                 return new Vector2f(-overlapX, 0);
             }
         } else {
            
-            if (this.max.y > other.min.y) {
+            if (this.max.y > other.min.y && other.min.y > this.min.y) {
                 return new Vector2f(0, overlapY); 
             } else {
                 return new Vector2f(0, -overlapY);
