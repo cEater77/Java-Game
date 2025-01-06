@@ -33,8 +33,6 @@ public class Game {
 
         World world = new World(renderer, resourceManager);
 
-        long timeBegin = 0;
-
         while (!glfwWindowShouldClose(window.getNativeWindow())) {
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -44,7 +42,6 @@ public class Game {
             renderer.renderBatch();
             uiManager.update();
             window.update();
-
         }
     }
 
@@ -57,4 +54,12 @@ public class Game {
     private ResourceManager resourceManager;
     private Renderer renderer;
     public static UIManager uiManager;
+    private GameState gamestate;
+
+    private enum GameState
+    {
+        START_MENU,
+        SELECTION,
+        IN_GAME
+    }
 }

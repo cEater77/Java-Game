@@ -7,7 +7,6 @@ import org.joml.Vector3f;
 import Engine.AABB;
 
 public class Entity {
-    protected int id;
     protected Vector3f position;
     protected AABB aabb;
     protected AnimationController animationController;
