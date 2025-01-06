@@ -60,6 +60,8 @@ public class Game {
     {
         START_MENU,
         SELECTION,
-        IN_GAME
+        PAUSE_MENU,
+        IN_GAME,
+        LEVEL_COMPLETE
     }
 }
