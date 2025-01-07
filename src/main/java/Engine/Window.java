@@ -1,10 +1,12 @@
 package Engine;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL33;
 import org.lwjgl.opengl.GL33;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class Window {
@@ -56,13 +58,20 @@ public class Window {
 
         // Make the window visible
         glfwShowWindow(nativeWindow);
+
+        GL.createCapabilities();
     }
 
     public void close(){
         glfwSetWindowShouldClose(nativeWindow, true);
     }
 
-    public void update()
+    public void beginFrame()
+    {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    public void endFrame()
     {
         int[] temp_width = new int[1], temp_height = new int[1];
         glfwGetWindowSize(nativeWindow, temp_width, temp_height);

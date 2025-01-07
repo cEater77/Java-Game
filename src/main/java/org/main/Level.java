@@ -1,28 +1,31 @@
 package org.main;
 
 import Engine.Camera;
+import Engine.animation.Animation;
 import Engine.renderer.Renderer;
 import Engine.ResourceManager;
 import Engine.renderer.Texture;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import org.main.entities.Entity;
-import org.main.entities.EntityType;
-import org.main.entities.Player;
+import org.main.GameObjects.GameObject;
+import org.main.GameObjects.GameObjectType;
+import org.main.GameObjects.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class World {
-    Camera camera = new Camera(new Vector3f(0, 0, 0));
-    Renderer renderer;
-    ResourceManager resourceManager;
-    List<Entity> entities = new ArrayList<>();
+public class Level {
+    private String levelName;
+    private Camera camera = new Camera(new Vector3f(0, 0, 0));
+    private Renderer renderer;
+    private ResourceManager resourceManager;
+    private List<GameObject> gameObjects = new ArrayList<>();
 
-    public World(Renderer renderer, ResourceManager resourceManager) {
+    public Level(Renderer renderer, ResourceManager resourceManager, String levelName) {
         this.renderer = renderer;
         this.resourceManager = resourceManager;
+        this.levelName = levelName;
 
         List<Texture> frames = new ArrayList<>();
         frames.add(resourceManager.getTexture("grass"));
@@ -34,12 +37,11 @@ public class World {
 
 
 
-        entities.add(new Player(new Vector3f(0.0f), frames));
+        gameObjects.add(new Player(new Vector3f(0.0f), frames));
     }
 
     public void tick() {
-
-        for (Entity e : entities) {
+        for (GameObject e : gameObjects) {
             e.update();
         }
 
@@ -55,16 +57,17 @@ public class World {
             }
         }
 
-        for (Entity e : entities) {
-            renderer.renderSprite(new Vector3f(e.getPosition()).negate(), new Vector2f(75.0f), e.getAnimationController().getCurrentAnimation().frameAnimationComponent.getCurrentFrame());
+        for (GameObject e : gameObjects) {
+            Animation entityAnimation = e.getAnimationController().getCurrentAnimation();
+            renderer.renderSprite(new Vector3f(e.getPosition()).negate(), new Vector2f(75.0f), entityAnimation.frameAnimationComponent.getCurrentFrame());
         }
 
         renderer.getShader().setUniform("camPos", camera.getIsometricPosition());
     }
 
     private void handleCollision() {
-        for (Entity e : entities) {
-            for (Entity e2 : entities) {
+        for (GameObject e : gameObjects) {
+            for (GameObject e2 : gameObjects) {
                 if (e != e2 && e.getAABB().isIntersecting(e2.getAABB())) {
                     e.onCollision(e2);
                     e2.onCollision(e);
@@ -94,10 +97,21 @@ public class World {
     }
 
     private Player getPlayer() {
-        for (Entity entity : entities) {
-            if (entity.getType() == EntityType.PLAYER)
-                return (Player) entity;
+        for (GameObject gameObject : gameObjects) {
+            if (gameObject.getType() == GameObjectType.PLAYER)
+                return (Player) gameObject;
         }
-        return null;
+
+        throw new IllegalArgumentException("Player doesn't exist");
+    }
+
+    public List<GameObject> getGameObjects()
+    {
+        return gameObjects;
+    }
+
+    public String getName()
+    {
+        return levelName;
     }
 }

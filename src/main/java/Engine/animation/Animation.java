@@ -1,10 +1,14 @@
 package Engine.animation;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 public class Animation {
 
-    public PositionAnimationComponent positionAnimationComponent;
-    public FrameAnimationComponent frameAnimationComponent;
-    public BlendAnimationComponent blendAnimationComponent;
+    public final PositionAnimationComponent positionAnimationComponent;
+    public final FrameAnimationComponent frameAnimationComponent;
+    public final BlendAnimationComponent blendAnimationComponent;
 
     public Animation(PositionAnimationComponent positionAnimationComponent, FrameAnimationComponent frameAnimationComponent, BlendAnimationComponent blendAnimationComponent) {
         this.positionAnimationComponent = positionAnimationComponent;
@@ -45,5 +49,14 @@ public class Animation {
             frameAnimationComponent.reset();
         if (blendAnimationComponent != null)
             blendAnimationComponent.reset();
+    }
+
+    public void serialize(DataOutputStream stream) throws IOException {
+        frameAnimationComponent.serialize(stream);
+    }
+
+    public void deserialize(DataInputStream stream)
+    {
+        frameAnimationComponent.deserialize(stream);
     }
 }

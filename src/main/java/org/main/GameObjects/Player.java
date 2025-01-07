@@ -1,4 +1,4 @@
-package org.main.entities;
+package org.main.GameObjects;
 
 import Engine.animation.Animation;
 import Engine.animation.AnimationController;
@@ -7,13 +7,13 @@ import Engine.renderer.Texture;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.main.MovementDirection;
-import org.w3c.dom.Text;
 
-import java.util.HashMap;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
-public class Player extends Entity {
+public class Player extends GameObject {
 
     private float speed = 1 / 150.0f;
     private PlayerState playerState = PlayerState.IDLE;
@@ -35,6 +35,10 @@ public class Player extends Entity {
 
         animationController.addTransition("idle", "walking", () -> playerState == PlayerState.WALKING);
         animationController.addTransition("walking", "idle", () -> playerState == PlayerState.IDLE);
+    }
+
+    public Player()
+    {
 
     }
 
@@ -44,12 +48,12 @@ public class Player extends Entity {
     }
 
     @Override
-    public EntityType getType() {
-        return EntityType.PLAYER;
+    public GameObjectType getType() {
+        return GameObjectType.PLAYER;
     }
 
     @Override
-    public void onCollision(Entity other) {
+    public void onCollision(GameObject other) {
         Vector2f offset = aabb.getMinTranslationVector(other.getAABB());
         setPosition(new Vector3f(-offset.x + position.x, -offset.y + position.y, 0));
     }
@@ -90,5 +94,22 @@ public class Player extends Entity {
 
     public void setSpeed(float speed) {
         this.speed = speed;
+    }
+
+    @Override
+    public void serialize(DataOutputStream stream)
+    {
+        try {
+            stream.writeInt(getType().ordinal());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        super.serialize(stream);
+    }
+
+    @Override
+    public void deserialize(DataInputStream stream)
+    {
+        super.deserialize(stream);
     }
 }

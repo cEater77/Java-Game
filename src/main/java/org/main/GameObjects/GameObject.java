@@ -1,20 +1,26 @@
-package org.main.entities;
+package org.main.GameObjects;
 
 import Engine.animation.AnimationController;
-import Engine.renderer.Texture;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import Engine.AABB;
 
-public class Entity {
+import java.io.*;
+
+public class GameObject {
     protected Vector3f position;
     protected AABB aabb;
     protected AnimationController animationController;
 
-    public Entity(Vector3f position)
+    public GameObject(Vector3f position)
     {
         this.position = position;
         this.aabb = new AABB(new Vector2f(position.x - 0.5f, position.y - 0.5f), new Vector2f(position.x + 0.5f, position.y + 0.5f));
+    }
+
+    public GameObject()
+    {
+
     }
 
     public void update()
@@ -23,13 +29,13 @@ public class Entity {
             animationController.update();
     }
 
-    public void onCollision(Entity other)
+    public void onCollision(GameObject other)
     {
     }
 
-    public EntityType getType()
+    public GameObjectType getType()
     {
-        return EntityType.UNKNOWN;
+        return GameObjectType.UNKNOWN;
     }
 
     public void setPosition(Vector3f position)
@@ -55,5 +61,21 @@ public class Entity {
     public AnimationController getAnimationController()
     {
         return animationController;
+    }
+
+    public void serialize(DataOutputStream stream)
+    {
+        try {
+            stream.writeFloat(position.x);
+            stream.writeFloat(position.y);
+            stream.writeFloat(position.z);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void deserialize(DataInputStream stream)
+    {
+
     }
 }

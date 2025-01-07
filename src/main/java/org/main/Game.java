@@ -14,7 +14,6 @@ public class Game {
 
         System.out.println("Initializing Game");
         window = new Window(800, 800, "Java Game");
-        GL.createCapabilities();
 
         resourceManager = new ResourceManager();
         resourceManager.init();
@@ -31,23 +30,28 @@ public class Game {
     public void run() {
         System.out.println("Running Game...");
 
-        World world = new World(renderer, resourceManager);
+        Level level = new Level(renderer, resourceManager);
 
         while (!glfwWindowShouldClose(window.getNativeWindow())) {
+            window.beginFrame();
 
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            world.tick();
+            level.tick();
 
             renderer.renderBatch();
             uiManager.update();
-            window.update();
+
+            window.endFrame();
         }
     }
 
     public void deinit() {
         System.out.println("Deinitializing Game");
         window.close();
+    }
+
+    public void createLevel()
+    {
+
     }
 
     public static Window window;
