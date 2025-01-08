@@ -12,34 +12,28 @@ public class GameObject {
     protected AABB aabb;
     protected AnimationController animationController;
 
-    public GameObject(Vector3f position)
-    {
+    public GameObject(Vector3f position) {
         this.position = position;
         this.aabb = new AABB(new Vector2f(position.x - 0.5f, position.y - 0.5f), new Vector2f(position.x + 0.5f, position.y + 0.5f));
     }
 
-    public GameObject()
-    {
+    public GameObject() {
 
     }
 
-    public void update()
-    {
-        if(animationController != null)
+    public void update() {
+        if (animationController != null)
             animationController.update();
     }
 
-    public void onCollision(GameObject other)
-    {
+    public void onCollision(GameObject other) {
     }
 
-    public GameObjectType getType()
-    {
+    public GameObjectType getType() {
         return GameObjectType.UNKNOWN;
     }
 
-    public void setPosition(Vector3f position)
-    {
+    public void setPosition(Vector3f position) {
         this.position = position;
         aabb.min = new Vector2f(position.x - 0.5f, position.y - 0.5f);
         aabb.max = new Vector2f(position.x + 0.5f, position.y + 0.5f);
@@ -49,8 +43,7 @@ public class GameObject {
         return position;
     }
 
-    public AABB getAABB()
-    {
+    public AABB getAABB() {
         return aabb;
     }
 
@@ -58,24 +51,19 @@ public class GameObject {
         this.animationController = animationController;
     }
 
-    public AnimationController getAnimationController()
-    {
+    public AnimationController getAnimationController() {
         return animationController;
     }
 
-    public void serialize(DataOutputStream stream)
-    {
-        try {
-            stream.writeFloat(position.x);
-            stream.writeFloat(position.y);
-            stream.writeFloat(position.z);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void serialize(DataOutputStream stream) throws IOException {
+        stream.writeFloat(position.x);
+        stream.writeFloat(position.y);
+        stream.writeFloat(position.z);
     }
 
-    public void deserialize(DataInputStream stream)
-    {
-
+    public void deserialize(DataInputStream stream) throws IOException {
+        position.x = stream.readFloat();
+        position.y = stream.readFloat();
+        position.z = stream.readFloat();
     }
 }

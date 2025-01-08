@@ -8,30 +8,27 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class Decoration extends GameObject{
+public class Decoration extends GameObject {
 
     private boolean ignoreCollision;
 
-    public Decoration(Vector3f position, boolean ignoreCollision)
-    {
+    public Decoration(Vector3f position, boolean ignoreCollision) {
         super(position);
         this.ignoreCollision = ignoreCollision;
     }
 
-    public Decoration()
-    {
+    public Decoration() {
 
     }
 
     @Override
-    public void update()
-    {
+    public void update() {
         super.update();
     }
 
     @Override
     public void onCollision(GameObject other) {
-        if(ignoreCollision)
+        if (ignoreCollision)
             return;
 
         super.onCollision(other);
@@ -43,21 +40,17 @@ public class Decoration extends GameObject{
     }
 
     @Override
-    public void serialize(DataOutputStream stream) {
-        try {
-            stream.writeInt(getType().ordinal());
-            stream.writeBoolean(ignoreCollision);
-            animationController.getCurrentAnimation().serialize(stream);
+    public void serialize(DataOutputStream stream) throws IOException {
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        stream.writeInt(getType().ordinal());
+        stream.writeBoolean(ignoreCollision);
+        animationController.getCurrentAnimation().serialize(stream);
         super.serialize(stream);
     }
 
     @Override
-    public void deserialize(DataInputStream stream)
-    {
+    public void deserialize(DataInputStream stream) throws IOException {
+        ignoreCollision = stream.readBoolean();
         super.deserialize(stream);
     }
 }

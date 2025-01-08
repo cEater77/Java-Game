@@ -18,8 +18,7 @@ public class Player extends GameObject {
     private float speed = 1 / 150.0f;
     private PlayerState playerState = PlayerState.IDLE;
 
-    private enum PlayerState
-    {
+    private enum PlayerState {
         IDLE,
         WALKING
     }
@@ -28,7 +27,7 @@ public class Player extends GameObject {
         super(position);
 
         Animation idle = new Animation(null, new FrameAnimationComponent(frames.subList(0, 3), 5.0f, true), null);
-        Animation walking = new Animation(null, new FrameAnimationComponent(frames.subList(3,6), 5.0f, true), null);
+        Animation walking = new Animation(null, new FrameAnimationComponent(frames.subList(3, 6), 5.0f, true), null);
 
         animationController = new AnimationController("idle", MovementDirection.NONE, idle);
         animationController.addAnimation("walking", MovementDirection.NONE, walking);
@@ -37,8 +36,7 @@ public class Player extends GameObject {
         animationController.addTransition("walking", "idle", () -> playerState == PlayerState.IDLE);
     }
 
-    public Player()
-    {
+    public Player() {
 
     }
 
@@ -82,7 +80,7 @@ public class Player extends GameObject {
             playerPositionDelta.normalize(speed);
         setPosition(new Vector3f(playerPositionDelta.x + position.x, playerPositionDelta.y + position.y, 0.0f));
 
-        if(playerPositionDelta.length() == 0)
+        if (playerPositionDelta.length() == 0)
             playerState = PlayerState.IDLE;
         else
             playerState = PlayerState.WALKING;
@@ -97,19 +95,13 @@ public class Player extends GameObject {
     }
 
     @Override
-    public void serialize(DataOutputStream stream)
-    {
-        try {
-            stream.writeInt(getType().ordinal());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void serialize(DataOutputStream stream) throws IOException {
+        stream.writeInt(getType().ordinal());
         super.serialize(stream);
     }
 
     @Override
-    public void deserialize(DataInputStream stream)
-    {
+    public void deserialize(DataInputStream stream) throws IOException {
         super.deserialize(stream);
     }
 }

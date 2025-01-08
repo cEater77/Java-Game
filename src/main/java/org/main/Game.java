@@ -25,12 +25,15 @@ public class Game {
 
         uiManager = new UIManager();
         uiManager.init(window.getNativeWindow());
+
+        levelBuilder = new LevelBuilder();
     }
 
     public void run() {
         System.out.println("Running Game...");
 
-        Level level = new Level(renderer, resourceManager);
+        Level level = new Level(renderer, resourceManager, "test");
+        levelBuilder.saveLevel(level);
 
         while (!glfwWindowShouldClose(window.getNativeWindow())) {
             window.beginFrame();
@@ -58,6 +61,7 @@ public class Game {
     private ResourceManager resourceManager;
     private Renderer renderer;
     public static UIManager uiManager;
+    public LevelBuilder levelBuilder;
     private GameState gamestate;
 
     private enum GameState

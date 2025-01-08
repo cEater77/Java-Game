@@ -49,8 +49,8 @@ public class AnimationComponent {
         stream.writeBoolean(shouldLoop);
     }
 
-    public void deserialize(DataInputStream stream)
-    {
-
+    public void deserialize(DataInputStream stream) throws IOException {
+        duration = stream.readFloat();
+        shouldLoop = stream.readBoolean();
     }
 }

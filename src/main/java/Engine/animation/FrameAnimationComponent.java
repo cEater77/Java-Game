@@ -1,11 +1,13 @@
 package Engine.animation;
 
 import Engine.renderer.Texture;
+import org.joml.Vector2f;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Vector;
 
 public class FrameAnimationComponent extends AnimationComponent {
 
@@ -46,8 +48,15 @@ public class FrameAnimationComponent extends AnimationComponent {
     }
 
     @Override
-    public void deserialize(DataInputStream stream)
-    {
+    public void deserialize(DataInputStream stream) throws IOException {
+        super.deserialize(stream);
+        int framesSize = stream.readInt();
+        for(int i = 0; i < framesSize; i++)
+        {
+            Vector2f uvPosition = new Vector2f(stream.readFloat(), stream.readFloat());
+            Vector2f uvSize = new Vector2f(stream.readFloat(), stream.readFloat());
 
+            frames.add(new Texture(uvPosition,uvSize));
+        }
     }
 }
