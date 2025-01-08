@@ -1,9 +1,12 @@
 package org.main;
 
+import Engine.ResourceManager;
+import Engine.renderer.Renderer;
 import org.main.GameObjects.GameObject;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,18 +14,29 @@ import java.util.List;
 public class LevelBuilder {
 
     private List<Level> levels = new ArrayList<>();
+    private Renderer renderer;
+    private ResourceManager resourceManager;
 
-    LevelBuilder()
+    LevelBuilder(Renderer renderer, ResourceManager resourceManager)
     {
-
+        this.renderer = renderer;
+        this.resourceManager = resourceManager;
     }
 
-    public void loadLevel(String fileName)
+    public void loadLevel(String t_filePath)
     {
         String filePath = "GameData/levels/test.bin";
-        try (DataInputStream dis = new DataInputStream(Files.newInputStream(Paths.get(filePath)))) {
-
-
+        String fileName = Paths.get(filePath).getFileName().toString();
+        try (DataInputStream stream = new DataInputStream(Files.newInputStream(Paths.get(filePath)))) {
+            Level level = new Level(renderer, resourceManager,fileName);
+            int gameObjectCount = stream.readInt();
+            for(int i = 0; i < gameObjectCount; i++)
+            {
+                GameObject gameObject = new GameObject();
+                gameObject.deserialize(stream);
+                level.addGameObject(gameObject);
+            }
+            levels.add(level);
         } catch (IOException e) {
             System.err.println("Error reading from file: " + e.getMessage());
         }

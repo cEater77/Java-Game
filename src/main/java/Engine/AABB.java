@@ -11,6 +11,11 @@ public class AABB {
         this.max = max;
     }
 
+    public AABB()
+    {
+
+    }
+
     public AABB(float x, float y, float width, float height) {
         this.min.x = x;
         this.min.y = y;

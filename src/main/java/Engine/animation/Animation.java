@@ -55,8 +55,7 @@ public class Animation {
         frameAnimationComponent.serialize(stream);
     }
 
-    public void deserialize(DataInputStream stream)
-    {
+    public void deserialize(DataInputStream stream) throws IOException {
         frameAnimationComponent.deserialize(stream);
     }
 }

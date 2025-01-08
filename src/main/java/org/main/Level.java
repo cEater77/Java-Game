@@ -114,4 +114,9 @@ public class Level {
     {
         return levelName;
     }
+
+    public void addGameObject(GameObject gameObject)
+    {
+        gameObjects.add(gameObject);
+    }
 }
