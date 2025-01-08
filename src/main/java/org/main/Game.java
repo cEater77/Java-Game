@@ -26,14 +26,14 @@ public class Game {
         uiManager = new UIManager();
         uiManager.init(window.getNativeWindow());
 
-        levelBuilder = new LevelBuilder();
+        levelBuilder = new LevelBuilder(renderer,resourceManager);
     }
 
     public void run() {
         System.out.println("Running Game...");
 
-        Level level = new Level(renderer, resourceManager, "test");
-        levelBuilder.saveLevel(level);
+        levelBuilder.loadLevel("a");
+        Level level = levelBuilder.getLevel("test.bin");
 
         while (!glfwWindowShouldClose(window.getNativeWindow())) {
             window.beginFrame();
@@ -45,6 +45,8 @@ public class Game {
 
             window.endFrame();
         }
+
+        levelBuilder.saveLevel(level);
     }
 
     public void deinit() {

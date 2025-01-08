@@ -8,9 +8,9 @@ import Engine.AABB;
 import java.io.*;
 
 public class GameObject {
-    protected Vector3f position;
-    protected AABB aabb;
-    protected AnimationController animationController;
+    protected Vector3f position = new Vector3f();
+    protected AABB aabb = new AABB();
+    protected AnimationController animationController = new AnimationController();
 
     public GameObject(Vector3f position) {
         this.position = position;
@@ -24,6 +24,9 @@ public class GameObject {
     public void update() {
         if (animationController != null)
             animationController.update();
+
+        aabb.min = new Vector2f(position.x - 0.5f, position.y - 0.5f);
+        aabb.max = new Vector2f(position.x + 0.5f, position.y + 0.5f);
     }
 
     public void onCollision(GameObject other) {
@@ -35,8 +38,6 @@ public class GameObject {
 
     public void setPosition(Vector3f position) {
         this.position = position;
-        aabb.min = new Vector2f(position.x - 0.5f, position.y - 0.5f);
-        aabb.max = new Vector2f(position.x + 0.5f, position.y + 0.5f);
     }
 
     public Vector3f getPosition() {
