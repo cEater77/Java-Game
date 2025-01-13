@@ -56,11 +56,7 @@ public class Level {
                 renderer.renderTile(new Vector3f(2.0f + (float) j, 2.0f + (float) i, 0.0f), resourceManager.getTexture("grass"));
             }
         }
-
-        for (GameObject e : gameObjects) {
-            Animation entityAnimation = e.getAnimationController().getCurrentAnimation();
-            renderer.renderSprite(new Vector3f(e.getPosition()).negate(), new Vector2f(75.0f), entityAnimation.frameAnimationComponent.getCurrentFrame());
-        }
+        
 
         renderer.getShader().setUniform("camPos", camera.getIsometricPosition());
     }

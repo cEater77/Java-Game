@@ -26,8 +26,8 @@ public class Player extends GameObject {
     public Player(Vector3f position, List<Texture> frames) {
         super(position);
 
-        Animation idle = new Animation(null, new FrameAnimationComponent(frames.subList(0, 3), 5.0f, true), null);
-        Animation walking = new Animation(null, new FrameAnimationComponent(frames.subList(3, 6), 5.0f, true), null);
+        Animation idle = new Animation();
+        Animation walking = new Animation();
 
         animationController = new AnimationController("idle", MovementDirection.NONE, idle);
         animationController.addAnimation("walking", MovementDirection.NONE, walking);
