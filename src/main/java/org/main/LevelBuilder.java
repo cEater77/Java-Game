@@ -30,12 +30,12 @@ public class LevelBuilder {
         try (DataInputStream stream = new DataInputStream(Files.newInputStream(Paths.get(filePath)))) {
             Level level = new Level(renderer, resourceManager,fileName);
             int gameObjectCount = stream.readInt();
-            for(int i = 0; i < gameObjectCount; i++)
+            /*for(int i = 0; i < gameObjectCount; i++)
             {
                 GameObject gameObject = new GameObject();
                 gameObject.deserialize(stream);
                 level.addGameObject(gameObject);
-            }
+            }*/
             levels.add(level);
         } catch (IOException e) {
             System.err.println("Error reading from file: " + e.getMessage());
