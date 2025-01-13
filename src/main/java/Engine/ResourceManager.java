@@ -80,7 +80,7 @@ public class ResourceManager {
 
     public void loadSounds(String name, Path soundFile)
     {
-        
+
     }
 
     public Shader getShader(String name)
