@@ -29,7 +29,10 @@ public class Player extends GameObject {
         super(position);
 
         Animation idle = new Animation();
+        idle.addFrameAnimation( 1.0f,true, frames.subList(0,3));
+
         Animation walking = new Animation();
+        walking.addFrameAnimation(1.0f,true, frames.subList(3,6));
 
         animationController = new AnimationController("idle", MovementDirection.NONE, idle);
         animationController.addAnimation("walking", MovementDirection.NONE, walking);

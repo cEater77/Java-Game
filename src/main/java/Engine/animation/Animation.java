@@ -6,6 +6,7 @@ import org.joml.Vector3f;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 public class Animation {
 
@@ -17,6 +18,11 @@ public class Animation {
         this.positionAnimationComponent = positionAnimationComponent;
         this.frameAnimationComponent = frameAnimationComponent;
         this.blendAnimationComponent = blendAnimationComponent;
+    }
+
+    public Animation()
+    {
+
     }
 
     public void update(float deltaTime) {
@@ -56,7 +62,7 @@ public class Animation {
 
     public void addFrameAnimation(float duration, boolean shouldLoop, List<Texture> frames)
     {
-
+        frameAnimationComponent = new FrameAnimationComponent(frames, duration, shouldLoop);
     }
 
     public void addBlendAnimation(float duration, boolean shouldLoop, float fromAlpha, float toAlpha)
