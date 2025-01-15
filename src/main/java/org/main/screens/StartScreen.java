@@ -5,6 +5,7 @@ import imgui.type.ImInt;
 import imgui.type.ImString;
 import org.main.Game;
 
+import java.beans.Visibility;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +15,8 @@ public class StartScreen implements IScreen {
 
     ImString playername = new ImString();
     Integer playernamelength = 0;
-    List<String> levelNames = Arrays.asList("Level auswählen","Level1","Level2","Level3","Level4","Level5","Level6","Level7","Level8","Level9","Level10","Level generieren");
+    List<String> levelNames = Arrays.asList("Level auswählen","Level 1","Level 2","Level 3","Level 4","Level 5","Level 6","Level 7","Level 8","Level 9","Level 10","Level generieren");
+
 
 
     @Override
@@ -39,7 +41,13 @@ public class StartScreen implements IScreen {
         String[] temp = new String[levelNames.size()]; for(int i = 0; i < levelNames.size(); i++) temp[i] = levelNames.get(i);
         ImGui.sameLine();ImGui.combo("Levels", new ImInt(0), temp);
 
-        ImGui.text("" + playername + "");
+        ImGui.text("");
+
+        ImGui.sameLine(0,ImGui.getWindowSizeX()-120); ImGui.text("Schwierigkeit:");
+
+        ImGui.sliderFloat("##",new float[5],1,100); //ImGui.sliderScalarN("##",new float[5],1,0,3);
+
+        ImGui.sliderFloat("##",new float[5],1,100); //Visibility
 
         if(ImGui.button("Start Game"))
             Game.uiManager.pushScreen(new HUDScreen());
