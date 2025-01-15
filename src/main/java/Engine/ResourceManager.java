@@ -16,6 +16,7 @@ import org.json.*;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
+import javax.sound.sampled.AudioInputStream;
 import java.nio.file.*;
 
 
@@ -23,6 +24,7 @@ public class ResourceManager {
 
     private final Map<String, Shader> shaders = new HashMap<String, Shader>();
     private final Map<String, Texture> textures = new HashMap<String, Texture>();
+    private final Map<String, AudioInputStream> sounds = new HashMap<>();
 
     private int textureAtlasID;
 
@@ -74,6 +76,11 @@ public class ResourceManager {
         String fragmentCode = getStringFromFile(fragmentPath);
 
         this.shaders.putIfAbsent(name, new Shader(vertexCode, fragmentCode));
+    }
+
+    public void loadSounds(String name, Path soundFile)
+    {
+
     }
 
     public Shader getShader(String name)
