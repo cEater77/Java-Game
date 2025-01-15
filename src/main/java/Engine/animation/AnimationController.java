@@ -1,5 +1,6 @@
 package Engine.animation;
 
+import org.main.Game;
 import org.main.MovementDirection;
 
 import java.util.ArrayList;
@@ -53,13 +54,7 @@ public class AnimationController {
 
     public void update() {
 
-        float deltaTime;
-        if (lastTimeInSec == 0) {
-            deltaTime = 0;
-        } else {
-            deltaTime = (System.nanoTime() - lastTimeInSec) / 1_000_000_000.0f;
-        }
-        lastTimeInSec = System.nanoTime();
+        float deltaTime = Game.window.getLastFrameDuration();
 
         if (!transitions.containsKey(currentAnimationName)) {
             getCurrentAnimation().update(deltaTime);

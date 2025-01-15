@@ -2,14 +2,17 @@ package org.main;
 
 import Engine.ResourceManager;
 import Engine.renderer.Renderer;
+import org.main.GameObjects.Block;
 import org.main.GameObjects.GameObject;
+import org.main.GameObjects.GameObjectType;
+import org.main.GameObjects.Player;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class LevelBuilder {
 
@@ -32,7 +35,14 @@ public class LevelBuilder {
             int gameObjectCount = stream.readInt();
             for(int i = 0; i < gameObjectCount; i++)
             {
-                GameObject gameObject = new GameObject();
+                GameObjectType type = GameObjectType.values()[stream.readInt()];
+                GameObject gameObject;
+                switch (type)
+                {
+                    case PLAYER: gameObject = new Player(resourceManager);break;
+                    case DECORATION: gameObject = new Block(); break;
+                    default: throw new IllegalStateException("Unknown type of GameObject was loaded in file");
+                }
                 gameObject.deserialize(stream);
                 level.addGameObject(gameObject);
             }

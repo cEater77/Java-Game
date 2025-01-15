@@ -1,5 +1,6 @@
 package org.main.GameObjects;
 
+import Engine.ResourceManager;
 import Engine.animation.Animation;
 import Engine.animation.AnimationController;
 import Engine.animation.FrameAnimationComponent;
@@ -11,6 +12,7 @@ import org.main.MovementDirection;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player extends GameObject {
@@ -36,8 +38,23 @@ public class Player extends GameObject {
         animationController.addTransition("walking", "idle", () -> playerState == PlayerState.IDLE);
     }
 
-    public Player() {
+    public Player(ResourceManager resourceManager) {
+        List<Texture> frames = new ArrayList<>();
+        frames.add(resourceManager.getTexture("grass"));
+        frames.add(resourceManager.getTexture("snow_grass"));
+        frames.add(resourceManager.getTexture("wood"));
+        frames.add(resourceManager.getTexture("ice"));
+        frames.add(resourceManager.getTexture("dark_wood"));
+        frames.add(resourceManager.getTexture("dark_log"));
 
+        Animation idle = new Animation(null, new FrameAnimationComponent(frames.subList(0, 3), 5.0f, true), null);
+        Animation walking = new Animation(null, new FrameAnimationComponent(frames.subList(3, 6), 5.0f, true), null);
+
+        animationController = new AnimationController("idle", MovementDirection.NONE, idle);
+        animationController.addAnimation("walking", MovementDirection.NONE, walking);
+
+        animationController.addTransition("idle", "walking", () -> playerState == PlayerState.WALKING);
+        animationController.addTransition("walking", "idle", () -> playerState == PlayerState.IDLE);
     }
 
     @Override
@@ -46,7 +63,7 @@ public class Player extends GameObject {
     }
 
     @Override
-    public GameObjectType getType() {
+    public GameObjectType getGameObjectType() {
         return GameObjectType.PLAYER;
     }
 
@@ -96,7 +113,7 @@ public class Player extends GameObject {
 
     @Override
     public void serialize(DataOutputStream stream) throws IOException {
-        stream.writeInt(getType().ordinal());
+        stream.writeInt(getGameObjectType().ordinal());
         super.serialize(stream);
     }
 

@@ -32,7 +32,7 @@ public class GameObject {
     public void onCollision(GameObject other) {
     }
 
-    public GameObjectType getType() {
+    public GameObjectType getGameObjectType() {
         return GameObjectType.UNKNOWN;
     }
 

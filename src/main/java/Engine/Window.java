@@ -66,8 +66,19 @@ public class Window {
         glfwSetWindowShouldClose(nativeWindow, true);
     }
 
+    public int getFps()
+    {
+        return fps;
+    }
+
+    public float getLastFrameDuration()
+    {
+        return lastFrameDurationSec;
+    }
+
     public void beginFrame()
     {
+        frameBeginSec = System.nanoTime();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
@@ -77,6 +88,21 @@ public class Window {
         glfwGetWindowSize(nativeWindow, temp_width, temp_height);
         width = temp_width[0];
         height = temp_height[0];
+
+        if (frameBeginSec == 0) {
+            lastFrameDurationSec = 0;
+        } else {
+            lastFrameDurationSec = (System.nanoTime() - frameBeginSec) / 1_000_000_000.0f;
+        }
+
+        timePassedInSec += lastFrameDurationSec;
+        currentFrameCount++;
+        if(timePassedInSec > 1.0f)
+        {
+            fps = currentFrameCount;
+            timePassedInSec = 0;
+        }
+
         GL33.glViewport(0,0, width, height);
         glfwSwapBuffers(nativeWindow);
         glfwPollEvents();
@@ -85,4 +111,11 @@ public class Window {
     private int width, height;
     private String title;
     public static long nativeWindow;
+
+    private int fps;
+    private int currentFrameCount;
+    private float timePassedInSec;
+    private float lastFrameDurationSec;
+
+    private long frameBeginSec;
 }

@@ -2,10 +2,15 @@ package org.main;
 
 import Engine.*;
 import Engine.renderer.Renderer;
-import org.lwjgl.opengl.*;
+import Engine.renderer.Texture;
+import org.joml.Vector3f;
+import org.main.GameObjects.Block;
+import org.main.GameObjects.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL33.*;
 import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class Game {
@@ -27,13 +32,18 @@ public class Game {
         uiManager.init(window.getNativeWindow());
 
         levelBuilder = new LevelBuilder(renderer,resourceManager);
+
+        registerBlocks();
     }
 
     public void run() {
         System.out.println("Running Game...");
 
-        levelBuilder.loadLevel("a");
-        Level level = levelBuilder.getLevel("test.bin");
+
+        Level level = new Level(renderer, resourceManager, "test");
+        changeLevel(level);
+
+        //Level level = levelBuilder.getLevel("test.bin");
 
         while (!glfwWindowShouldClose(window.getNativeWindow())) {
             window.beginFrame();
@@ -45,8 +55,7 @@ public class Game {
 
             window.endFrame();
         }
-
-        levelBuilder.saveLevel(level);
+        //levelBuilder.saveLevel(level);
     }
 
     public void deinit() {
@@ -54,8 +63,23 @@ public class Game {
         window.close();
     }
 
-    public void createLevel()
+    private void changeLevel(Level level)
     {
+        List<Texture> frames = new ArrayList<>();
+        frames.add(resourceManager.getTexture("snow_grass"));
+        frames.add(resourceManager.getTexture("snow_grass"));
+        frames.add(resourceManager.getTexture("snow_grass"));
+        frames.add(resourceManager.getTexture("snow_grass"));
+        frames.add(resourceManager.getTexture("snow_grass"));
+        frames.add(resourceManager.getTexture("snow_grass"));
+        frames.add(resourceManager.getTexture("snow_grass"));
+        level.addGameObject(new Player(new Vector3f(0.0f), frames));
+    }
+
+    private void registerBlocks()
+    {
+        Block woodBlock = new Block(new Vector3f(0.0f), true, Block.BlockTypeID.WOOD);
+
 
     }
 

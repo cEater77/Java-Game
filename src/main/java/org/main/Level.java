@@ -27,17 +27,7 @@ public class Level {
         this.resourceManager = resourceManager;
         this.levelName = levelName;
 
-        List<Texture> frames = new ArrayList<>();
-        frames.add(resourceManager.getTexture("grass"));
-        frames.add(resourceManager.getTexture("snow_grass"));
-        frames.add(resourceManager.getTexture("wood"));
-        frames.add(resourceManager.getTexture("ice"));
-        frames.add(resourceManager.getTexture("dark_wood"));
-        frames.add(resourceManager.getTexture("dark_log"));
-
-
-
-        gameObjects.add(new Player(new Vector3f(0.0f), frames));
+        //gameObjects.add(new Player(new Vector3f(0.0f), frames));
     }
 
     public void tick() {
@@ -98,7 +88,7 @@ public class Level {
 
     private Player getPlayer() {
         for (GameObject gameObject : gameObjects) {
-            if (gameObject.getType() == GameObjectType.PLAYER)
+            if (gameObject.getGameObjectType() == GameObjectType.PLAYER)
                 return (Player) gameObject;
         }
 

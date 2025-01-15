@@ -43,14 +43,4 @@ public class AnimationComponent {
     {
         elapsedTime = 0;
     }
-
-    public void serialize(DataOutputStream stream) throws IOException {
-        stream.writeFloat(duration);
-        stream.writeBoolean(shouldLoop);
-    }
-
-    public void deserialize(DataInputStream stream) throws IOException {
-        duration = stream.readFloat();
-        shouldLoop = stream.readBoolean();
-    }
 }

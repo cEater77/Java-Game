@@ -50,12 +50,4 @@ public class Animation {
         if (blendAnimationComponent != null)
             blendAnimationComponent.reset();
     }
-
-    public void serialize(DataOutputStream stream) throws IOException {
-        frameAnimationComponent.serialize(stream);
-    }
-
-    public void deserialize(DataInputStream stream) throws IOException {
-        frameAnimationComponent.deserialize(stream);
-    }
 }
