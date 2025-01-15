@@ -28,7 +28,15 @@ public class AnimationController {
         public final Supplier<Boolean> condition;
     }
 
-    public AnimationController() {
+    public AnimationController(AnimationController animationController) {
+        this.transitions = new HashMap<>(animationController.transitions);
+        this.animations = new HashMap<>(animationController.animations);
+        this.currentAnimationName = animationController.currentAnimationName;
+        this.currentDirection = animationController.currentDirection;
+    }
+
+    public AnimationController()
+    {
 
     }
 
@@ -54,7 +62,7 @@ public class AnimationController {
 
     public void update() {
 
-        float deltaTime = Game.window.getLastFrameDuration();
+        float deltaTime = Game.getWindow().getLastFrameDuration();
 
         if (!transitions.containsKey(currentAnimationName)) {
             getCurrentAnimation().update(deltaTime);

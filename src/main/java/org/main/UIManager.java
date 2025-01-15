@@ -4,6 +4,7 @@ import imgui.ImGui;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 import imgui.internal.ImGuiContext;
+import org.main.screens.EditorScreen;
 import org.main.screens.IScreen;
 import org.main.screens.StartScreen;
 
@@ -12,12 +13,12 @@ import java.util.Stack;
 
 public class UIManager {
 
-    public void init(long window)
+    public UIManager()
     {
         ImGui.createContext();
-        glfwImpl.init(window, true);
+        glfwImpl.init(Game.getWindow().getNativeWindow(), true);
         glImpl.init("#version 330");
-        pushScreen(new StartScreen());
+        pushScreen(new EditorScreen());
     }
 
     public void update()
@@ -29,7 +30,7 @@ public class UIManager {
         if(!screens.isEmpty())
         {
             IScreen currentScreen = screens.peek();
-            currentScreen.resize(Game.window.getWidth(), Game.window.getHeight());
+            currentScreen.resize(Game.getWindow().getWidth(), Game.getWindow().getHeight());
             currentScreen.update();
             currentScreen.render();
         }

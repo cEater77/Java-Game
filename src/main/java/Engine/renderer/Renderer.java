@@ -15,15 +15,10 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 
 public class Renderer {
 
-    public Renderer()
-    {
-        vertices = new ArrayList<Vertex>();
-    }
-
-    public void init(Shader shader)
+    public Renderer(Shader shader)
     {
         this.shader = shader;
-        
+
         vao = GL33.glGenVertexArrays();
         GL33.glBindVertexArray(vao);
 
@@ -139,7 +134,7 @@ public class Renderer {
     private int vao;
     private int vbo;
     private Shader shader;
-    private List<Vertex> vertices;
+    private List<Vertex> vertices = new ArrayList<Vertex>();;
     private final Matrix3f isometricMat = new Matrix3f();
     private final float TILE_SIZE = 80.0f;
 }

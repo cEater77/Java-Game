@@ -25,39 +25,13 @@ public class Player extends GameObject {
         WALKING
     }
 
-    public Player(Vector3f position, List<Texture> frames) {
+    public Player(Vector3f position, ResourceManager resourceManager) {
         super(position);
-
-        Animation idle = new Animation();
-        idle.addFrameAnimation( 1.0f,true, frames.subList(0,3));
-
-        Animation walking = new Animation();
-        walking.addFrameAnimation(1.0f,true, frames.subList(3,6));
-
-        animationController = new AnimationController("idle", MovementDirection.NONE, idle);
-        animationController.addAnimation("walking", MovementDirection.NONE, walking);
-
-        animationController.addTransition("idle", "walking", () -> playerState == PlayerState.WALKING);
-        animationController.addTransition("walking", "idle", () -> playerState == PlayerState.IDLE);
+        setupAnimations(resourceManager);
     }
 
     public Player(ResourceManager resourceManager) {
-        List<Texture> frames = new ArrayList<>();
-        frames.add(resourceManager.getTexture("grass"));
-        frames.add(resourceManager.getTexture("snow_grass"));
-        frames.add(resourceManager.getTexture("wood"));
-        frames.add(resourceManager.getTexture("ice"));
-        frames.add(resourceManager.getTexture("dark_wood"));
-        frames.add(resourceManager.getTexture("dark_log"));
-
-        Animation idle = new Animation(null, new FrameAnimationComponent(frames.subList(0, 3), 5.0f, true), null);
-        Animation walking = new Animation(null, new FrameAnimationComponent(frames.subList(3, 6), 5.0f, true), null);
-
-        animationController = new AnimationController("idle", MovementDirection.NONE, idle);
-        animationController.addAnimation("walking", MovementDirection.NONE, walking);
-
-        animationController.addTransition("idle", "walking", () -> playerState == PlayerState.WALKING);
-        animationController.addTransition("walking", "idle", () -> playerState == PlayerState.IDLE);
+        setupAnimations(resourceManager);
     }
 
     @Override
@@ -72,8 +46,15 @@ public class Player extends GameObject {
 
     @Override
     public void onCollision(GameObject other) {
-        Vector2f offset = aabb.getMinTranslationVector(other.getAABB());
-        setPosition(new Vector3f(-offset.x + position.x, -offset.y + position.y, 0));
+
+        switch (other.getGameObjectType()) {
+            case BLOCK:
+                if (((Block) other).ignoresCollision()) return;
+            default: {
+                Vector2f offset = aabb.getMinTranslationVector(other.getAABB());
+                setPosition(new Vector3f(-offset.x + position.x, -offset.y + position.y, 0));
+            }
+        }
     }
 
     public void move(List<MovementDirection> directions) {
@@ -82,16 +63,16 @@ public class Player extends GameObject {
         for (MovementDirection direction : directions) {
             switch (direction) {
                 case LEFT:
-                    playerPositionDelta.x -= speed;
-                    break;
-                case RIGHT:
                     playerPositionDelta.x += speed;
                     break;
+                case RIGHT:
+                    playerPositionDelta.x -= speed;
+                    break;
                 case BACKWARD:
-                    playerPositionDelta.y -= speed;
+                    playerPositionDelta.y += speed;
                     break;
                 case FORWARD:
-                    playerPositionDelta.y += speed;
+                    playerPositionDelta.y -= speed;
                     break;
             }
         }
@@ -112,6 +93,28 @@ public class Player extends GameObject {
 
     public void setSpeed(float speed) {
         this.speed = speed;
+    }
+
+    private void setupAnimations(ResourceManager resourceManager) {
+        List<Texture> frames = new ArrayList<>();
+        frames.add(resourceManager.getTexture("grass"));
+        frames.add(resourceManager.getTexture("snow_grass"));
+        frames.add(resourceManager.getTexture("wood"));
+        frames.add(resourceManager.getTexture("ice"));
+        frames.add(resourceManager.getTexture("dark_wood"));
+        frames.add(resourceManager.getTexture("dark_log"));
+
+        Animation idle = new Animation();
+        idle.addFrameAnimation(1.0f, true, frames.subList(0, 3));
+
+        Animation walking = new Animation();
+        walking.addFrameAnimation(1.0f, true, frames.subList(3, 6));
+
+        animationController = new AnimationController("idle", MovementDirection.NONE, idle);
+        animationController.addAnimation("walking", MovementDirection.NONE, walking);
+
+        animationController.addTransition("idle", "walking", () -> playerState == PlayerState.WALKING);
+        animationController.addTransition("walking", "idle", () -> playerState == PlayerState.IDLE);
     }
 
     @Override

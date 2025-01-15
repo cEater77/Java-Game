@@ -21,6 +21,10 @@ public class GameObject {
 
     }
 
+    public GameObject(GameObject gameObject) {
+        this.position = new Vector3f(gameObject.position);
+    }
+
     public void update() {
         if (animationController != null)
             animationController.update();
@@ -48,13 +52,21 @@ public class GameObject {
         return aabb;
     }
 
-    public void setAnimationController(AnimationController animationController) {
+    public AnimationController getAnimationController()
+    {
+        return animationController;
+    }
+
+    public void setAnimationController(AnimationController animationController)
+    {
         this.animationController = animationController;
     }
 
-    public AnimationController getAnimationController() {
-        return animationController;
+    public String toString()
+    {
+        return "x:" + position.x + " y:" + position.y + " z:" + position.z + " ";
     }
+
 
     public void serialize(DataOutputStream stream) throws IOException {
         stream.writeFloat(position.x);

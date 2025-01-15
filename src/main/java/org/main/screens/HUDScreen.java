@@ -14,7 +14,7 @@ public class HUDScreen implements IScreen {
     public void render() {
         ImGui.begin("HUD Screen");
         if(ImGui.button("Leave Game"))
-            Game.uiManager.popScreen();
+            Game.getUiManager().popScreen();
         ImGui.end();
     }
 

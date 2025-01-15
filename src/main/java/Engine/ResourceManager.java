@@ -28,8 +28,7 @@ public class ResourceManager {
 
     private int textureAtlasID;
 
-    public void init()
-    {
+    public ResourceManager() {
         ByteBuffer imageBuffer;
         int width, height;
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -63,14 +62,13 @@ public class ResourceManager {
         JSONArray textureDefs = new JSONObject(getStringFromFile("assets/texture/textureDefs.json")).getJSONArray("textures");
         for (int i = 0; i < textureDefs.length(); i++) {
             JSONObject texture = textureDefs.getJSONObject(i);
-            Vector2f uvPos = new Vector2f((float) texture.getJSONArray("position").getInt(0) / width, (float) texture.getJSONArray("position").getInt(1) / height );
-            Vector2f uvSize = new Vector2f((float)Texture.DEFAULT_TEXTURE_WIDTH / width, (float)Texture.DEFAULT_TEXTURE_HEIGHT / height);
+            Vector2f uvPos = new Vector2f((float) texture.getJSONArray("position").getInt(0) / width, (float) texture.getJSONArray("position").getInt(1) / height);
+            Vector2f uvSize = new Vector2f((float) Texture.DEFAULT_TEXTURE_WIDTH / width, (float) Texture.DEFAULT_TEXTURE_HEIGHT / height);
             this.textures.put(texture.getString("name"), new Texture(uvPos, uvSize));
         }
     }
 
-    public void loadShader(String name, String vertexPath, String fragmentPath)
-    {
+    public void loadShader(String name, String vertexPath, String fragmentPath) {
         String vertexCode = getStringFromFile(vertexPath);
 
         String fragmentCode = getStringFromFile(fragmentPath);
@@ -78,19 +76,19 @@ public class ResourceManager {
         this.shaders.putIfAbsent(name, new Shader(vertexCode, fragmentCode));
     }
 
-    public void loadSounds(String name, Path soundFile)
-    {
+    public void loadSounds(String name, Path soundFile) {
 
     }
 
-    public Shader getShader(String name)
-    {
+    public Shader getShader(String name) {
         return this.shaders.get(name);
     }
-    public Texture getTexture(String name){return this.textures.get(name);}
 
-    private String getStringFromFile(String path)
-    {
+    public Texture getTexture(String name) {
+        return this.textures.get(name);
+    }
+
+    private String getStringFromFile(String path) {
         try {
             return new String(Files.readAllBytes(Paths.get(path)));
         } catch (IOException e) {

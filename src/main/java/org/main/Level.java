@@ -1,6 +1,7 @@
 package org.main;
 
 import Engine.Camera;
+import Engine.Window;
 import Engine.animation.Animation;
 import Engine.renderer.Renderer;
 import Engine.ResourceManager;
@@ -13,27 +14,34 @@ import org.main.GameObjects.GameObjectType;
 import org.main.GameObjects.Player;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Level {
     private String levelName;
     private Camera camera = new Camera(new Vector3f(0, 0, 0));
-    private Renderer renderer;
-    private ResourceManager resourceManager;
     private List<GameObject> gameObjects = new ArrayList<>();
 
-    public Level(Renderer renderer, ResourceManager resourceManager, String levelName) {
+    private Renderer renderer;
+    private ResourceManager resourceManager;
+    private UIManager uiManager;
+
+    public Level(Renderer renderer, ResourceManager resourceManager,UIManager uiManager, String levelName) {
         this.renderer = renderer;
         this.resourceManager = resourceManager;
-        this.levelName = levelName;
+        this.uiManager = uiManager;
 
-        //gameObjects.add(new Player(new Vector3f(0.0f), frames));
+        this.levelName = levelName;
     }
 
     public void tick() {
-        for (GameObject e : gameObjects) {
-            e.update();
-        }
+
+        gameObjects.sort(Comparator
+                .comparingDouble((GameObject g) -> g.getPosition().x)
+                .thenComparingDouble(g -> g.getPosition().y)
+                .thenComparingDouble(g -> g.getPosition().z)
+        );
+        gameObjects.forEach(GameObject::update);
 
         handleCollision();
         handleInput();
@@ -41,14 +49,20 @@ public class Level {
     }
 
     private void draw() {
-        for (int i = -12; i < 13; i++) {
-            for (int j = -12; j < 13; j++) {
-                renderer.renderTile(new Vector3f(2.0f + (float) j, 2.0f + (float) i, 0.0f), resourceManager.getTexture("grass"));
-            }
-        }
-        
 
-        renderer.getShader().setUniform("camPos", camera.getIsometricPosition());
+        for(GameObject gameObject : gameObjects)
+        {
+            if(gameObject.getGameObjectType() == GameObjectType.PLAYER)
+                continue;
+            Animation animation = gameObject.getAnimationController().getCurrentAnimation();
+            renderer.renderTile(gameObject.getPosition(), animation.getCurrentFrameAnimationData());
+        }
+
+        Player player = getPlayer();
+        Animation animation = player.getAnimationController().getCurrentAnimation();
+        renderer.renderTile(player.getPosition(), animation.getCurrentFrameAnimationData());
+
+        renderer.getShader().setUniform("camPos", camera.getIsometricPosition().negate());
     }
 
     private void handleCollision() {
@@ -65,21 +79,22 @@ public class Level {
     private void handleInput() {
         Player player = getPlayer();
         List<MovementDirection> movement = new ArrayList<>();
+        long nativeWindow = Game.getWindow().getNativeWindow();
 
-        if (GLFW.glfwGetKey(Game.window.getNativeWindow(), GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS)
+        if (GLFW.glfwGetKey(nativeWindow, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS)
             movement.add(MovementDirection.FORWARD);
 
-        if (GLFW.glfwGetKey(Game.window.getNativeWindow(), GLFW.GLFW_KEY_S) == GLFW.GLFW_PRESS)
+        if (GLFW.glfwGetKey(nativeWindow, GLFW.GLFW_KEY_S) == GLFW.GLFW_PRESS)
             movement.add(MovementDirection.BACKWARD);
 
-        if (GLFW.glfwGetKey(Game.window.getNativeWindow(), GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS)
+        if (GLFW.glfwGetKey(nativeWindow, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS)
             movement.add(MovementDirection.RIGHT);
 
-        if (GLFW.glfwGetKey(Game.window.getNativeWindow(), GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS)
+        if (GLFW.glfwGetKey(nativeWindow, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS)
             movement.add(MovementDirection.LEFT);
 
         player.move(movement);
-        camera.setIsometricPosition(player.getPosition());
+        camera.setIsometricPosition(new Vector3f(getPlayer().getPosition()));
     }
 
     private Player getPlayer() {

@@ -1,26 +1,27 @@
 package org.main.GameObjects;
 
+import Engine.AABB;
+import Engine.ResourceManager;
+import Engine.animation.AnimationController;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.main.Game;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class Block extends GameObject {
 
     private boolean ignoreCollision;
     private BlockTypeID typeID;
 
-    private final static Map<BlockTypeID, Block> blockRegistry = new HashMap<>();
-
-    public enum BlockTypeID
-    {
+    public enum BlockTypeID {
         WOOD
     }
 
-    public Block(Vector3f position, boolean ignoreCollision, BlockTypeID typeID) {
+    public Block(Vector3f position, ResourceManager resourceManager, boolean ignoreCollision, BlockTypeID typeID) {
         super(position);
         this.ignoreCollision = ignoreCollision;
         this.typeID = typeID;
@@ -30,9 +31,13 @@ public class Block extends GameObject {
 
     }
 
-    public static void registerBlock(Block block)
+    public Block(Block block)
     {
-        blockRegistry.put(block.getBlockType(), block);
+        super(block);
+        this.ignoreCollision = block.ignoreCollision;
+        this.typeID = block.typeID;
+        this.aabb = new AABB(block.aabb);
+        this.animationController = new AnimationController(block.animationController);
     }
 
     @Override
@@ -50,12 +55,22 @@ public class Block extends GameObject {
 
     @Override
     public GameObjectType getGameObjectType() {
-        return GameObjectType.DECORATION;
+        return GameObjectType.BLOCK;
     }
 
-    public BlockTypeID getBlockType()
-    {
+    public BlockTypeID getBlockType() {
         return typeID;
+    }
+
+    public boolean ignoresCollision()
+    {
+        return ignoreCollision;
+    }
+
+    @Override
+    public String toString()
+    {
+        return super.toString() + "BlockTypeID: " + typeID.toString() + " ";
     }
 
     @Override
@@ -70,7 +85,7 @@ public class Block extends GameObject {
     public void deserialize(DataInputStream stream) throws IOException {
 
         typeID = BlockTypeID.values()[stream.readInt()];
-        Block blockToCopyFrom = blockRegistry.get(typeID);
+        Block blockToCopyFrom = Game.getBlockRegistry().getBlockByID(typeID);
 
         ignoreCollision = blockToCopyFrom.ignoreCollision;
         animationController = blockToCopyFrom.animationController;

@@ -11,16 +11,25 @@ public class AABB {
         this.max = max;
     }
 
-    public AABB()
-    {
-
-    }
 
     public AABB(float x, float y, float width, float height) {
         this.min.x = x;
         this.min.y = y;
         this.max.x = width;
         this.max.y = height;
+    }
+
+    public AABB(AABB aabb)
+    {
+        this.min.x = aabb.min.x;
+        this.min.y = aabb.min.y;
+        this.max.x = aabb.max.x;
+        this.max.y = aabb.max.y;
+    }
+
+    public AABB()
+    {
+
     }
 
     public boolean isIntersecting(AABB other) {

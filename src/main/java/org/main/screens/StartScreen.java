@@ -42,7 +42,7 @@ public class StartScreen implements IScreen {
         ImGui.text("" + playername + "");
 
         if(ImGui.button("Start Game"))
-            Game.uiManager.pushScreen(new HUDScreen());
+            Game.getUiManager().pushScreen(new HUDScreen());
         ImGui.end();
     }
 
