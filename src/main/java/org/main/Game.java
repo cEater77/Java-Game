@@ -68,12 +68,21 @@ public class Game {
     private void registerBlocks() {
         Block woodBlock = new Block(new Vector3f(0.0f), resourceManager, true, Block.BlockTypeID.WOOD);
 
-        Animation defaultAnimation = new Animation();
-        List<Texture> frames = Arrays.asList(resourceManager.getTexture("wood"));
-        defaultAnimation.addFrameAnimation(1.0f, false, frames);
-        woodBlock.setAnimationController(new AnimationController("default", MovementDirection.NONE, defaultAnimation));
+        Animation defaultAnimationWood = new Animation();
+        List<Texture> framesWood = Arrays.asList(resourceManager.getTexture("wood"));
+        defaultAnimationWood.addFrameAnimation(1.0f, false, framesWood);
+        woodBlock.setAnimationController(new AnimationController("default", MovementDirection.NONE, defaultAnimationWood));
 
         blockRegistry.registerBlock(woodBlock);
+
+        Block darkWoodBlock = new Block(new Vector3f(0.0f), resourceManager, true, Block.BlockTypeID.DARK_WOOD);
+
+        Animation defaultAnimationDarkWood = new Animation();
+        List<Texture> framesDarkWood = Arrays.asList(resourceManager.getTexture("dark_wood"));
+        defaultAnimationDarkWood.addFrameAnimation(1.0f, false, framesDarkWood);
+        darkWoodBlock.setAnimationController(new AnimationController("default", MovementDirection.NONE, defaultAnimationDarkWood));
+
+        blockRegistry.registerBlock(darkWoodBlock);
     }
 
     public static Window getWindow() {
