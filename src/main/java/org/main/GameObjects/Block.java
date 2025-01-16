@@ -18,7 +18,8 @@ public class Block extends GameObject {
     private BlockTypeID typeID;
 
     public enum BlockTypeID {
-        WOOD
+        WOOD,
+        DARK_WOOD
     }
 
     public Block(Vector3f position, ResourceManager resourceManager, boolean ignoreCollision, BlockTypeID typeID) {

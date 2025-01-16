@@ -25,6 +25,8 @@ public class EditorScreen implements IScreen {
     private int deleteFrom;
     private int deleteTo;
 
+    private ImInt index = new ImInt(0);
+
     @Override
     public void update() {
 
@@ -42,7 +44,6 @@ public class EditorScreen implements IScreen {
         positionChanged = x.get() - currentPos.x != 0 || y.get() - currentPos.y != 0 || z.get() - currentPos.z != 0;
         currentPos.x = x.get(); currentPos.y = y.get(); currentPos.z = z.get();
 
-        ImInt index = new ImInt(0);
         String[] values = new String[Block.BlockTypeID.values().length]; for(int i = 0; i < values.length; i++) values[i] = Block.BlockTypeID.values()[i].toString().toLowerCase();
         ImGui.combo("Blocks to place",index,values);
         selectedBlockID = Block.BlockTypeID.values()[index.get()];
