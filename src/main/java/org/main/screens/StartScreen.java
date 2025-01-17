@@ -18,6 +18,7 @@ public class StartScreen implements IScreen {
     boolean ranglisteactive;
     int r = 0;
     int timerverändert = 0;
+    int lastselecteddifficulty;
     List<String> ranglistePosition = Arrays.asList("1. ", "2. ", "3. ", "4. ", "5. ", "6. ", "7. ", "8. ", "9. ", "10. ");
 
     int[] visibilty = new int[1];
@@ -49,25 +50,27 @@ public class StartScreen implements IScreen {
             ImGui.text("");
         }
 
-        ImGui.text("" + playernamelength);
-
-        ImGui.inputTextWithHint("##", "Spielername eingeben", playername);
-        playernamelength = playername.getLength();
-        String[] temp = new String[levelNames.size()];
-        for (int i = 0; i < levelNames.size(); i++) temp[i] = levelNames.get(i);
-        ImGui.sameLine();
-        ImGui.combo("Levels", new ImInt(0), temp);
-
         ImGui.text("");
 
-        ImGui.sameLine(0, ImGui.getWindowSizeX() - 120);
+        ImGui.setNextItemWidth(ImGui.getWindowSizeX()/3);
+        ImGui.inputTextWithHint("##SpielerNameEingabe", "Spielername eingeben", playername);
+        playernamelength = playername.getLength();
+        //if(ImGui.getWindowSizeX() >= 400){ ImGui.sameLine(280); ImGui.text("Hallo");}
+        String[] temp = new String[levelNames.size()];
+        for (int i = 0; i < levelNames.size(); i++) temp[i] = levelNames.get(i);
+        ImGui.sameLine(ImGui.getWindowSizeX()/3*2+10);
+        ImGui.setNextItemWidth(ImGui.getWindowSizeX()/3);
+        ImGui.combo("Levels", new ImInt(0), temp);
+
+        ImGui.text("" + ImGui.getWindowSizeX());
+
+        ImGui.text("");
+        ImGui.sameLine(0, ImGui.getWindowSizeX() - ((ImGui.getWindowSizeX()-10)/3));
         ImGui.text("Schwierigkeit:");
 
-        ImGui.sliderFloat("##aeserserer", new float[5], 1, 100); //ImGui.sliderScalarN("##",new float[5],1,0,3);
-
-
-        ImGui.sliderInt("##oeghuifdh",visibilty , 1, 100); //Visibility
-
+        ImGui.text("");
+        ImGui.sameLine(0, ImGui.getWindowSizeX() - (ImGui.getWindowSizeX()/3));
+        ImGui.setNextItemWidth(ImGui.getWindowSizeX()/3);
         ImGui.sliderInt("##Schwierigkeitsslider", difficultyIndex, 0, 3, Schwierigkeit.values()[difficultyIndex[0]].toString().toLowerCase());
         if(Schwierigkeit.values()[difficultyIndex[0]] == Schwierigkeit.EINFACH){
             visibilty[0] = 80;
@@ -77,10 +80,54 @@ public class StartScreen implements IScreen {
             visibilty[0] = 20;
         }
 
-        //ImGui.sliderAngle("##",)
+        ImGui.text("");
+        ImGui.sameLine(0, ImGui.getWindowSizeX() - ((ImGui.getWindowSizeX()-10)/3));
+        ImGui.text("Visibility:");
 
         ImGui.text("");
-        ImGui.sameLine(0, ImGui.getWindowSizeX() - 100);
+        ImGui.sameLine(0, ImGui.getWindowSizeX() - (ImGui.getWindowSizeX()/3));
+        ImGui.setNextItemWidth(ImGui.getWindowSizeX()/3);
+        ImGui.sliderInt("##visibilityslider",visibilty , 1, 100); //Visibility
+
+        ImGui.text("");
+
+        ImGui.text("");
+        ImGui.sameLine(0, ImGui.getWindowSizeX() - (ImGui.getWindowSizeX()/3-2));
+        if (ImGui.checkbox("Rangliste", ranglisteactive)) {
+            if (r == 0) {
+                ranglisteactive = true;
+                r = 1;
+                if (z == 0) {
+                    timerverändert = 1;
+                    z = 1;
+                    timeractive = true;
+                }
+                lastselecteddifficulty = difficultyIndex[0];
+                difficultyIndex[0] = Schwierigkeit.SCHWER.ordinal();
+
+            } else {
+                ranglisteactive = false;
+                r = 0;
+                if (z == 1 && timerverändert == 1) {
+                    z = 0;
+                    timerverändert = 0;
+                    timeractive = false;
+                }
+                difficultyIndex[0] = lastselecteddifficulty;
+            }
+        }
+
+        ImGui.text("Rangliste:");
+        ImGui.sameLine(ImGui.getWindowSizeX()/9*2);
+        ImGui.text("Zeit:");
+
+        String[] löle = new String[ranglistePosition.size()];
+        for (int j = 0; j < ranglistePosition.size(); j++) löle[j] = ranglistePosition.get(j);
+        ImGui.setNextItemWidth(ImGui.getWindowSizeX()/3);
+        ImGui.listBox("##RanglisteLISTE", new ImInt(0), löle);
+
+
+        ImGui.sameLine(ImGui.getWindowSizeX()/3*2+10);
         if (ImGui.checkbox("Timer", timeractive)) {
             if (z == 0) {
                 timeractive = true;
@@ -91,33 +138,10 @@ public class StartScreen implements IScreen {
             }
         }
 
-        ImGui.text("");
-        ImGui.sameLine(0, ImGui.getWindowSizeX() - 100);
-        if (ImGui.checkbox("Rangliste", ranglisteactive)) {
-            if (r == 0) {
-                ranglisteactive = true;
-                r = 1;
-                if (z == 0) {
-                    timerverändert = 1;
-                    z = 1;
-                    timeractive = true;
-                }
-            } else {
-                ranglisteactive = false;
-                r = 0;
-                if (z == 1 && timerverändert == 1) {
-                    z = 0;
-                    timerverändert = 0;
-                    timeractive = false;
-                }
-            }
-        }
 
-        ImGui.text("Rangliste:");
 
-        String[] löle = new String[ranglistePosition.size()];
-        for (int j = 0; j < ranglistePosition.size(); j++) löle[j] = ranglistePosition.get(j);
-        ImGui.listBox("##RanglisteLISTE", new ImInt(0), löle);
+
+
 
         // String[] temp = new String[levelNames.size()];
         //ImGui.sameLine();ImGui.combo("Levels", new ImInt(0), temp);
