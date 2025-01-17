@@ -120,4 +120,8 @@ public class Level {
     {
         gameObjects.add(gameObject);
     }
+    public void removeGameObject(GameObject gameObject)
+    {
+        gameObjects.remove(gameObject);
+    }
 }
