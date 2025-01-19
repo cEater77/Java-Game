@@ -7,6 +7,7 @@ import Engine.animation.FrameAnimationComponent;
 import Engine.renderer.Texture;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.main.Game;
 import org.main.MovementDirection;
 
 import java.io.DataInputStream;
@@ -17,7 +18,7 @@ import java.util.List;
 
 public class Player extends GameObject {
 
-    private float speed = 1 / 150.0f;
+    private float speedInMeterPerSecond = 10.0f;
     private PlayerState playerState = PlayerState.IDLE;
 
     private enum PlayerState {
@@ -57,8 +58,9 @@ public class Player extends GameObject {
         }
     }
 
-    public void move(List<MovementDirection> directions) {
+    public void move(List<MovementDirection> directions, double delta) {
         Vector2f playerPositionDelta = new Vector2f(0.0f, 0.0f);
+        float speed = speedInMeterPerSecond * (float)delta;
 
         for (MovementDirection direction : directions) {
             switch (direction) {
@@ -88,11 +90,11 @@ public class Player extends GameObject {
     }
 
     public float getSpeed() {
-        return speed;
+        return speedInMeterPerSecond;
     }
 
     public void setSpeed(float speed) {
-        this.speed = speed;
+        this.speedInMeterPerSecond = speed;
     }
 
     private void setupAnimations(ResourceManager resourceManager) {
@@ -100,15 +102,11 @@ public class Player extends GameObject {
         frames.add(resourceManager.getTexture("grass"));
         frames.add(resourceManager.getTexture("snow_grass"));
         frames.add(resourceManager.getTexture("wood"));
-        frames.add(resourceManager.getTexture("ice"));
-        frames.add(resourceManager.getTexture("dark_wood"));
-        frames.add(resourceManager.getTexture("dark_log"));
-
         Animation idle = new Animation();
-        idle.addFrameAnimation(1.0f, true, frames.subList(0, 3));
+        idle.addFrameAnimation(1.0f, true, frames.subList(0, 2));
 
         Animation walking = new Animation();
-        walking.addFrameAnimation(1.0f, true, frames.subList(3, 6));
+        walking.addFrameAnimation(1.0f, true, frames.subList(2, 3));
 
         animationController = new AnimationController("idle", MovementDirection.NONE, idle);
         animationController.addAnimation("walking", MovementDirection.NONE, walking);

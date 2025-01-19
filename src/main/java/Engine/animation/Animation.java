@@ -51,6 +51,26 @@ public class Animation {
         return positonFinished && blendFinished && frameFinished;
     }
 
+    public void pauseAnimation()
+    {
+        if (positionAnimationComponent != null)
+            positionAnimationComponent.pause(true);
+        if (frameAnimationComponent != null)
+            frameAnimationComponent.pause(true);
+        if (blendAnimationComponent != null)
+            blendAnimationComponent.pause(true);
+    }
+
+    public void resumeAnimation()
+    {
+        if (positionAnimationComponent != null)
+            positionAnimationComponent.pause(false);
+        if (frameAnimationComponent != null)
+            frameAnimationComponent.pause(false);
+        if (blendAnimationComponent != null)
+            blendAnimationComponent.pause(false);
+    }
+
     public void reset() {
         if (positionAnimationComponent != null)
             positionAnimationComponent.reset();
@@ -77,6 +97,8 @@ public class Animation {
 
     public Texture getCurrentFrameAnimationData()
     {
+        if(frameAnimationComponent == null)
+            return Texture.EMPTY_TEXTURE;
         return frameAnimationComponent.getCurrentFrame();
     }
 

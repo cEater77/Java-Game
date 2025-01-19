@@ -1,8 +1,9 @@
 package org.main.screens;
 
 import imgui.ImGui;
+import org.main.Game;
 
-public class SettingsScreen implements IScreen{
+public class InfoScreen implements IScreen{
     @Override
     public void update() {
 
@@ -10,7 +11,10 @@ public class SettingsScreen implements IScreen{
 
     @Override
     public void render() {
-        ImGui.begin("Settings Screen");
+        ImGui.begin("Info Screen");
+
+        ImGui.text("FPS: " + Game.getWindow().getFps());
+
         ImGui.end();
     }
 
@@ -36,6 +40,6 @@ public class SettingsScreen implements IScreen{
 
     @Override
     public boolean shouldAlwaysRender() {
-        return false;
+        return true;
     }
 }

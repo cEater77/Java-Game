@@ -1,6 +1,5 @@
 package org.main;
 
-import Engine.Camera;
 import Engine.Window;
 import Engine.animation.Animation;
 import Engine.renderer.Renderer;
@@ -12,15 +11,18 @@ import org.lwjgl.glfw.GLFW;
 import org.main.GameObjects.GameObject;
 import org.main.GameObjects.GameObjectType;
 import org.main.GameObjects.Player;
+import org.main.screens.PauseScreen;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Vector;
 
 public class Level {
     private String levelName;
-    private Camera camera = new Camera(new Vector3f(0, 0, 0));
     private List<GameObject> gameObjects = new ArrayList<>();
+    private boolean isLevelPaused = false;
+    private boolean isLevelFinished = false;
 
     private Renderer renderer;
     private ResourceManager resourceManager;
@@ -36,24 +38,39 @@ public class Level {
 
     public void tick() {
 
-        gameObjects.sort(Comparator
-                .comparingDouble((GameObject g) -> g.getPosition().x)
-                .thenComparingDouble(g -> g.getPosition().y)
-                .thenComparingDouble(g -> g.getPosition().z)
-        );
-        gameObjects.forEach(GameObject::update);
+        if (!isLevelPaused) {
+            gameObjects.sort(Comparator
+                    .comparingDouble((GameObject g) -> g.getPosition().x)
+                    .thenComparingDouble(g -> g.getPosition().y)
+                    .thenComparingDouble(g -> g.getPosition().z)
+            );
+            gameObjects.forEach(GameObject::update);
 
-        handleCollision();
-        handleInput();
-        draw();
+            handleCollision();
+
+            if (uiManager.getCurrentScreen() instanceof PauseScreen) {
+                uiManager.popScreen();
+            }
+        } else {
+            if (!(uiManager.getCurrentScreen() instanceof PauseScreen)) {
+                uiManager.pushScreen(new PauseScreen());
+            }
+        }
+
     }
 
-    private void draw() {
+    public void draw() {
 
         for (GameObject gameObject : gameObjects) {
             if (gameObject.getGameObjectType() == GameObjectType.PLAYER)
                 continue;
+
             Animation animation = gameObject.getAnimationController().getCurrentAnimation();
+            if (isLevelPaused)
+                animation.pauseAnimation();
+            else
+                animation.resumeAnimation();
+
             renderer.renderTile(gameObject.getPosition(), animation.getCurrentFrameAnimationData(), animation.getCurrentBlendAnimationData(), gameObject.isHighlighted() ? 1.0f : 0.0f);
         }
 
@@ -61,7 +78,8 @@ public class Level {
         Animation animation = player.getAnimationController().getCurrentAnimation();
         renderer.renderTile(player.getPosition(), animation.getCurrentFrameAnimationData(), animation.getCurrentBlendAnimationData(), player.isHighlighted() ? 1.0f : 0.0f);
 
-        renderer.getShader().setUniform("camPos", camera.getIsometricPosition().negate());
+        Vector3f camPos = new Vector3f(player.getPosition());
+        renderer.getShader().setUniform("camPos", camPos.negate());
     }
 
     private void handleCollision() {
@@ -75,10 +93,12 @@ public class Level {
         }
     }
 
-    private void handleInput() {
+    public void handleInput(double delta) {
+
+        long nativeWindow = Game.getWindow().getNativeWindow();
+
         Player player = getPlayer();
         List<MovementDirection> movement = new ArrayList<>();
-        long nativeWindow = Game.getWindow().getNativeWindow();
 
         if (GLFW.glfwGetKey(nativeWindow, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS)
             movement.add(MovementDirection.FORWARD);
@@ -92,8 +112,7 @@ public class Level {
         if (GLFW.glfwGetKey(nativeWindow, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS)
             movement.add(MovementDirection.LEFT);
 
-        player.move(movement);
-        camera.setIsometricPosition(new Vector3f(getPlayer().getPosition()));
+        player.move(movement, delta);
     }
 
     private Player getPlayer() {
@@ -123,5 +142,20 @@ public class Level {
 
     public Renderer getRenderer() {
         return renderer;
+    }
+
+    public void pause()
+    {
+        isLevelPaused = true;
+    }
+
+    public void resume()
+    {
+        isLevelPaused = false;
+    }
+
+    public boolean isPaused()
+    {
+        return isLevelPaused;
     }
 }

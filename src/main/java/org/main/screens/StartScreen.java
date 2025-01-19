@@ -21,7 +21,7 @@ public class StartScreen implements IScreen {
     int lastselecteddifficulty;
     List<String> ranglistePosition = Arrays.asList("1. ", "2. ", "3. ", "4. ", "5. ", "6. ", "7. ", "8. ", "9. ", "10. ");
 
-    int[] visibilty = new int[1];
+    int[] visibilty = {20};
 
     public enum Schwierigkeit {
         EINFACH,
@@ -154,5 +154,25 @@ public class StartScreen implements IScreen {
     @Override
     public void resize(int width, int height) {
 
+    }
+
+    @Override
+    public void onEntrance() {
+
+    }
+
+    @Override
+    public void onExit() {
+
+    }
+
+    @Override
+    public boolean shouldRenderBehind() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldAlwaysRender() {
+        return false;
     }
 }

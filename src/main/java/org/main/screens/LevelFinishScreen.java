@@ -1,8 +1,6 @@
 package org.main.screens;
 
-import imgui.ImGui;
-
-public class SettingsScreen implements IScreen{
+public class LevelFinishScreen implements IScreen {
     @Override
     public void update() {
 
@@ -10,8 +8,7 @@ public class SettingsScreen implements IScreen{
 
     @Override
     public void render() {
-        ImGui.begin("Settings Screen");
-        ImGui.end();
+
     }
 
     @Override

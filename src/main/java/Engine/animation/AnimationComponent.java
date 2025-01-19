@@ -10,6 +10,7 @@ public class AnimationComponent {
     private boolean shouldLoop;
     protected float progress = 0;
     private float duration;
+    private boolean isPaused = false;
 
     public AnimationComponent(float duration, boolean shouldLoop) {
         this.duration = duration;
@@ -22,6 +23,10 @@ public class AnimationComponent {
     }
 
     public void update(float deltaTime) {
+
+        if(isPaused)
+            return;
+
         elapsedTime += deltaTime;
         progress = elapsedTime / duration;
         if (progress >= 1) {
@@ -30,6 +35,11 @@ public class AnimationComponent {
 
             progress = 1.0f;
         }
+    }
+
+    public void pause(boolean shouldPause)
+    {
+        this.isPaused = shouldPause;
     }
 
     public boolean isFinished() {

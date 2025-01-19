@@ -10,16 +10,20 @@ import org.main.Game;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.function.Consumer;
 
 
 public class Block extends GameObject {
 
     private boolean ignoreCollision;
     private BlockTypeID typeID;
+    private Consumer<GameObject> collisionCallback;
 
     public enum BlockTypeID {
         WOOD,
-        DARK_WOOD
+        DARK_WOOD,
+        FINISH,
+        BARRIER
     }
 
     public Block(Vector3f position, ResourceManager resourceManager, boolean ignoreCollision, BlockTypeID typeID) {
@@ -39,6 +43,7 @@ public class Block extends GameObject {
         this.typeID = block.typeID;
         this.aabb = new AABB(block.aabb);
         this.animationController = new AnimationController(block.animationController);
+        this.collisionCallback = block.collisionCallback;
     }
 
     @Override
@@ -52,6 +57,9 @@ public class Block extends GameObject {
             return;
 
         super.onCollision(other);
+
+        if(collisionCallback != null)
+            collisionCallback.accept(other);
     }
 
     @Override
@@ -66,6 +74,11 @@ public class Block extends GameObject {
     public boolean ignoresCollision()
     {
         return ignoreCollision;
+    }
+
+    public void setCollisionCallback(Consumer<GameObject> collisionCallback)
+    {
+        this.collisionCallback = collisionCallback;
     }
 
     @Override
@@ -90,6 +103,7 @@ public class Block extends GameObject {
 
         ignoreCollision = blockToCopyFrom.ignoreCollision;
         animationController = blockToCopyFrom.animationController;
+        collisionCallback = blockToCopyFrom.collisionCallback;
 
         super.deserialize(stream);
     }

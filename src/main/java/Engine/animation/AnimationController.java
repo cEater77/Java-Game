@@ -1,5 +1,6 @@
 package Engine.animation;
 
+import Engine.renderer.Texture;
 import org.main.Game;
 import org.main.MovementDirection;
 
@@ -15,7 +16,6 @@ public class AnimationController {
     private Map<String, List<Transition>> transitions = new HashMap<>();
     private String currentAnimationName;
     private MovementDirection currentDirection;
-    private long lastTimeInSec = 0;
 
     public class Transition
     {
@@ -37,7 +37,19 @@ public class AnimationController {
 
     public AnimationController()
     {
+        Animation defaultAnim = new Animation();
+        addAnimation("default", MovementDirection.NONE, defaultAnim);
+        currentAnimationName = "default";
+        currentDirection = MovementDirection.NONE;
+    }
 
+    public AnimationController(List<Texture> frames)
+    {
+        Animation defaultAnim = new Animation();
+        defaultAnim.addFrameAnimation(1.0f, false, frames);
+        addAnimation("default", MovementDirection.NONE, defaultAnim);
+        currentAnimationName = "default";
+        currentDirection = MovementDirection.NONE;
     }
 
     public AnimationController(String defaultAnimationName, MovementDirection defaultDirection, Animation defaultAnimation) {
@@ -62,7 +74,7 @@ public class AnimationController {
 
     public void update() {
 
-        float deltaTime = Game.getWindow().getLastFrameDuration();
+        float deltaTime = (float)Game.getWindow().getLastFrameDuration();
 
         if (!transitions.containsKey(currentAnimationName)) {
             getCurrentAnimation().update(deltaTime);

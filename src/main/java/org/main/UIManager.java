@@ -6,6 +6,7 @@ import imgui.glfw.ImGuiImplGlfw;
 import imgui.internal.ImGuiContext;
 import org.main.screens.EditorScreen;
 import org.main.screens.IScreen;
+import org.main.screens.InfoScreen;
 import org.main.screens.StartScreen;
 
 import java.util.Stack;
@@ -13,26 +14,29 @@ import java.util.Stack;
 
 public class UIManager {
 
-    public UIManager()
-    {
+    public UIManager() {
         ImGui.createContext();
         glfwImpl.init(Game.getWindow().getNativeWindow(), true);
         glImpl.init("#version 330");
+        pushScreen(new InfoScreen());
         pushScreen(new EditorScreen());
     }
 
-    public void update()
-    {
+    public void update() {
         glfwImpl.newFrame();
         glImpl.newFrame();
         ImGui.newFrame();
 
-        if(!screens.isEmpty())
-        {
-            IScreen currentScreen = screens.peek();
-            currentScreen.resize(Game.getWindow().getWidth(), Game.getWindow().getHeight());
-            currentScreen.update();
-            currentScreen.render();
+        Stack<IScreen> stackScreen = (Stack<IScreen>) screens.clone();
+        boolean shouldRenderBehind = true;
+        while (!stackScreen.isEmpty()) {
+            IScreen currentScreen = stackScreen.pop();
+            if (shouldRenderBehind || currentScreen.shouldAlwaysRender()) {
+                currentScreen.update();
+                currentScreen.render();
+                currentScreen.resize(Game.getWindow().getWidth(), Game.getWindow().getHeight());
+                shouldRenderBehind = currentScreen.shouldRenderBehind();
+            }
         }
 
         ImGui.showDemoWindow();
@@ -41,14 +45,18 @@ public class UIManager {
         glImpl.renderDrawData(ImGui.getDrawData());
     }
 
-    public void pushScreen(IScreen screen)
-    {
+    public void pushScreen(IScreen screen) {
+        screen.onEntrance();
         screens.push(screen);
     }
 
-    public void popScreen()
-    {
-        screens.pop();
+    public void popScreen() {
+        IScreen screen = screens.pop();
+        screen.onExit();
+    }
+
+    public IScreen getCurrentScreen() {
+        return screens.peek();
     }
 
     private ImGuiContext uiContext;

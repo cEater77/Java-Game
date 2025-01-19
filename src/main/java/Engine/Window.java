@@ -1,9 +1,13 @@
 package Engine;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL33;
 import org.lwjgl.opengl.GL33;
+import org.lwjgl.system.MemoryStack;
+
+import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -46,11 +50,6 @@ public class Window {
         if ( nativeWindow == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
-        glfwSetKeyCallback(nativeWindow, (window, key, scancode, action, mods) -> {
-            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-        });
-
         // Make the OpenGL context current
         glfwMakeContextCurrent(nativeWindow);
         // Enable v-sync
@@ -84,10 +83,18 @@ public class Window {
 
     public void endFrame()
     {
-        int[] temp_width = new int[1], temp_height = new int[1];
-        glfwGetWindowSize(nativeWindow, temp_width, temp_height);
-        width = temp_width[0];
-        height = temp_height[0];
+        if(!isFullScreen)
+        {
+            int[] temp_width = new int[1], temp_height = new int[1], temp_x = new int[1], temp_y = new int[1];
+            glfwGetWindowSize(nativeWindow, temp_width, temp_height);
+            glfwGetWindowPos(nativeWindow, temp_x, temp_y);
+            width = temp_width[0];
+            height = temp_height[0];
+            xPosition = temp_x[0];
+            yPosition = temp_y[0];
+            viewportWidth = width;
+            viewportHeight = height;
+        }
 
         if (frameBeginSec == 0) {
             lastFrameDurationSec = 0;
@@ -96,26 +103,48 @@ public class Window {
         }
 
         timePassedInSec += lastFrameDurationSec;
+        totalGameTimeInSec += lastFrameDurationSec;
         currentFrameCount++;
         if(timePassedInSec > 1.0f)
         {
             fps = currentFrameCount;
             timePassedInSec = 0;
+            currentFrameCount = 0;
         }
 
-        GL33.glViewport(0,0, width, height);
+        GL33.glViewport(0,0, viewportWidth, viewportHeight);
         glfwSwapBuffers(nativeWindow);
         glfwPollEvents();
     }
 
+    public void toggleFullscreen() {
+        isFullScreen = !isFullScreen;
+
+        if (isFullScreen) {
+            long monitor = glfwGetPrimaryMonitor();
+            GLFWVidMode videoMode = glfwGetVideoMode(monitor);
+            glfwSetWindowMonitor(nativeWindow, monitor, 0, 0, videoMode.width(), videoMode.height(), videoMode.refreshRate());
+            viewportWidth = videoMode.width();
+            viewportHeight = videoMode.height();
+        } else {
+            glfwSetWindowMonitor(nativeWindow, 0, xPosition, yPosition, width, height, 0);
+        }
+    }
+
     private int width, height;
+    private int xPosition, yPosition;
     private String title;
     public static long nativeWindow;
 
-    private int fps;
+    private int viewportWidth, viewportHeight;
+
     private int currentFrameCount;
     private float timePassedInSec;
-    private float lastFrameDurationSec;
-
     private long frameBeginSec;
+
+    private int fps;
+    private float lastFrameDurationSec;
+    private float totalGameTimeInSec;
+
+    private boolean isFullScreen = false;
 }

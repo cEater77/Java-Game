@@ -125,7 +125,7 @@ public class EditorScreen implements IScreen {
             shouldPlaceAfterPosChange = !shouldPlaceAfterPosChange;
         }
 
-        ImGui.sliderFloat("tileSize", tileSize, 10.0f, 100.0f);
+        ImGui.sliderFloat("tileSize", tileSize, 30.0f, 150.0f);
         Game.getCurrentActiveLevel().getRenderer().setTileSize(tileSize[0]);
 
         ImGui.text("Click ctrl while selecting to select all Game Objects in between");
@@ -169,6 +169,26 @@ public class EditorScreen implements IScreen {
     @Override
     public void resize(int width, int height) {
 
+    }
+
+    @Override
+    public void onEntrance() {
+
+    }
+
+    @Override
+    public void onExit() {
+
+    }
+
+    @Override
+    public boolean shouldRenderBehind() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldAlwaysRender() {
+        return false;
     }
 
     private void undo()

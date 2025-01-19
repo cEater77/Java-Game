@@ -3,8 +3,8 @@
     {
       "name": "grass",
       "position": [
-        32,
-        0
+        0,
+        32
       ]
     },
     {
@@ -22,9 +22,9 @@
       ]
     },
     {
-      "name": "ice",
+      "name": "endPoint",
       "position": [
-        64,
+        32,
         0
       ]
     },
