@@ -5,6 +5,7 @@ import imgui.type.ImInt;
 import imgui.type.ImString;
 import org.main.Game;
 
+import java.beans.Visibility;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,9 +20,10 @@ public class StartScreen implements IScreen {
     int r = 0;
     int timerverändert = 0;
     int lastselecteddifficulty;
+    int getLastselectedvisibilty;
     List<String> ranglistePosition = Arrays.asList("1. ", "2. ", "3. ", "4. ", "5. ", "6. ", "7. ", "8. ", "9. ", "10. ");
 
-    int[] visibilty = {20};
+    int[] visibilty = {80};
 
     public enum Schwierigkeit {
         EINFACH,
@@ -58,7 +60,7 @@ public class StartScreen implements IScreen {
         //if(ImGui.getWindowSizeX() >= 400){ ImGui.sameLine(280); ImGui.text("Hallo");}
         String[] temp = new String[levelNames.size()];
         for (int i = 0; i < levelNames.size(); i++) temp[i] = levelNames.get(i);
-        ImGui.sameLine(ImGui.getWindowSizeX()/3*2+10);
+        ImGui.sameLine(ImGui.getWindowSizeX()/3*2+8);
         ImGui.setNextItemWidth(ImGui.getWindowSizeX()/3);
         ImGui.combo("Levels", new ImInt(0), temp);
 
@@ -71,23 +73,34 @@ public class StartScreen implements IScreen {
         ImGui.text("");
         ImGui.sameLine(0, ImGui.getWindowSizeX() - (ImGui.getWindowSizeX()/3));
         ImGui.setNextItemWidth(ImGui.getWindowSizeX()/3);
-        ImGui.sliderInt("##Schwierigkeitsslider", difficultyIndex, 0, 3, Schwierigkeit.values()[difficultyIndex[0]].toString().toLowerCase());
-        if(Schwierigkeit.values()[difficultyIndex[0]] == Schwierigkeit.EINFACH){
-            visibilty[0] = 80;
-        } else if (Schwierigkeit.values()[difficultyIndex[0]] == Schwierigkeit.MITTEL) {
-            visibilty[0] = 50;
-        } else if (Schwierigkeit.values()[difficultyIndex[0]] == Schwierigkeit.SCHWER) {
-            visibilty[0] = 20;
+        if(ImGui.sliderInt("##Schwierigkeitsslider", difficultyIndex, 0, 3, Schwierigkeit.values()[difficultyIndex[0]].toString().toLowerCase())){
+            if(Schwierigkeit.values()[difficultyIndex[0]] == Schwierigkeit.EINFACH){
+                visibilty[0] = 80;
+            } else if (Schwierigkeit.values()[difficultyIndex[0]] == Schwierigkeit.MITTEL) {
+                visibilty[0] = 50;
+            } else if (Schwierigkeit.values()[difficultyIndex[0]] == Schwierigkeit.SCHWER) {
+                visibilty[0] = 20;
+            }
         }
 
-        ImGui.text("");
+        ImGui.text(""+ visibilty[0]);
         ImGui.sameLine(0, ImGui.getWindowSizeX() - ((ImGui.getWindowSizeX()-10)/3));
         ImGui.text("Visibility:");
 
         ImGui.text("");
         ImGui.sameLine(0, ImGui.getWindowSizeX() - (ImGui.getWindowSizeX()/3));
         ImGui.setNextItemWidth(ImGui.getWindowSizeX()/3);
-        ImGui.sliderInt("##visibilityslider",visibilty , 1, 100); //Visibility
+        if(ImGui.sliderInt("##visibilityslider",visibilty , 1, 100)){//Visibility
+            if (visibilty[0] == 20) {
+                difficultyIndex[0] = Schwierigkeit.SCHWER.ordinal();
+            }else if (visibilty[0] == 50) {
+                difficultyIndex[0] = Schwierigkeit.MITTEL.ordinal();
+            }else if (visibilty[0] == 80) {
+                difficultyIndex[0] = Schwierigkeit.EINFACH.ordinal();
+            }else if (visibilty[0] != 20 && visibilty[0] != 50 && visibilty[0] != 80) {
+                difficultyIndex[0] = Schwierigkeit.INDIVIDUELL.ordinal();
+            }
+        }
 
         ImGui.text("");
 
@@ -104,8 +117,9 @@ public class StartScreen implements IScreen {
                 }
                 lastselecteddifficulty = difficultyIndex[0];
                 difficultyIndex[0] = Schwierigkeit.SCHWER.ordinal();
-
-            } else {
+                getLastselectedvisibilty = visibilty[0];
+                visibilty[0] = 20;
+            }else {
                 ranglisteactive = false;
                 r = 0;
                 if (z == 1 && timerverändert == 1) {
@@ -114,7 +128,29 @@ public class StartScreen implements IScreen {
                     timeractive = false;
                 }
                 difficultyIndex[0] = lastselecteddifficulty;
+                visibilty[0] = getLastselectedvisibilty;
             }
+        }
+        if (r == 1 && Schwierigkeit.values()[difficultyIndex[0]] != Schwierigkeit.SCHWER) {
+            r = 0;
+            ranglisteactive = false;
+            if (z == 1 && timerverändert == 1) {
+                z = 0;
+                timerverändert = 0;
+                timeractive = false;
+            }
+            difficultyIndex[0] = lastselecteddifficulty;
+            visibilty[0] = getLastselectedvisibilty;
+        }else if (r == 1 && z==0) {
+            r = 0;
+            ranglisteactive = false;
+            if (z == 1 && timerverändert == 1) {
+                z = 0;
+                timerverändert = 0;
+                timeractive = false;
+            }
+            difficultyIndex[0] = lastselecteddifficulty;
+            visibilty[0] = getLastselectedvisibilty;
         }
 
         ImGui.text("Rangliste:");
@@ -154,25 +190,5 @@ public class StartScreen implements IScreen {
     @Override
     public void resize(int width, int height) {
 
-    }
-
-    @Override
-    public void onEntrance() {
-
-    }
-
-    @Override
-    public void onExit() {
-
-    }
-
-    @Override
-    public boolean shouldRenderBehind() {
-        return false;
-    }
-
-    @Override
-    public boolean shouldAlwaysRender() {
-        return false;
     }
 }
