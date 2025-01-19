@@ -32,6 +32,10 @@ public class Renderer {
         GL33.glEnableVertexAttribArray(1);
         GL33.glVertexAttribPointer(2, 2, GL33.GL_FLOAT, false, Vertex.VERTEX_SIZE * Float.BYTES, 5 * Float.BYTES); // Texture
         GL33.glEnableVertexAttribArray(2);
+        GL33.glVertexAttribPointer(3, 1, GL33.GL_FLOAT, false, Vertex.VERTEX_SIZE * Float.BYTES, 7 * Float.BYTES);
+        GL33.glEnableVertexAttribArray(3);
+        GL33.glVertexAttribPointer(4, 1, GL33.GL_FLOAT, false, Vertex.VERTEX_SIZE * Float.BYTES, 8 * Float.BYTES);
+        GL33.glEnableVertexAttribArray(4);
 
         // Unbind the VAO and VBO
         GL33.glBindVertexArray(0);
@@ -41,35 +45,35 @@ public class Renderer {
         isometricMat.m01(-0.25f);  isometricMat.m11(-0.25f);     isometricMat.m21(0.5f);
         isometricMat.m02(0);       isometricMat.m12(0);          isometricMat.m22(0);
 
-        isometricMat.scale(TILE_SIZE);
+        isometricMat.scale(tileSize);
 
         GL33.glEnable(GL33.GL_BLEND);
         GL33.glBlendFunc(GL33.GL_SRC_ALPHA, GL33.GL_ONE_MINUS_SRC_ALPHA);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     }
 
-    public void renderTile(Vector3f pos, Texture texture)
+    public void renderTile(Vector3f pos, Texture texture, float alpha, float isHighlighted)
     {
-        renderSprite(pos, new Vector2f(TILE_SIZE, TILE_SIZE), texture);
+        renderSprite(pos, new Vector2f(tileSize, tileSize), texture, alpha, isHighlighted);
     }
 
-    public void renderSprite(Vector3f pos, Vector2f size, Texture texture)
+    public void renderSprite(Vector3f pos, Vector2f size, Texture texture, float alpha, float isHighlighted)
     {
         Vector2f bottomLeftCornerUV = new Vector2f(texture.uvPosition);
         Vector2f bottomLeftCornerOffset = new Vector2f(0,0);
-        Vertex bottomLeftCorner = new Vertex(pos,bottomLeftCornerOffset, bottomLeftCornerUV);
+        Vertex bottomLeftCorner = new Vertex(pos,bottomLeftCornerOffset, bottomLeftCornerUV, alpha, isHighlighted);
 
         Vector2f bottomRightCornerOffset = new Vector2f(size.x, 0);
         Vector2f bottomRightCornerUV = new Vector2f(texture.uvPosition.x + texture.uvSize.x, texture.uvPosition.y);
-        Vertex bottomRightCorner = new Vertex(pos,bottomRightCornerOffset, bottomRightCornerUV);
+        Vertex bottomRightCorner = new Vertex(pos,bottomRightCornerOffset, bottomRightCornerUV, alpha, isHighlighted);
 
         Vector2f topRightCornerOffset = new Vector2f(size.x, size.y);
         Vector2f topRightCornerUV = new Vector2f(texture.uvPosition.x + texture.uvSize.x, texture.uvPosition.y + texture.uvSize.y);
-        Vertex topRightCorner = new Vertex(pos,topRightCornerOffset, topRightCornerUV);
+        Vertex topRightCorner = new Vertex(pos,topRightCornerOffset, topRightCornerUV, alpha, isHighlighted);
 
         Vector2f topLeftCornerOffset = new Vector2f(0, size.y);
         Vector2f topLeftCornerUV = new Vector2f(texture.uvPosition.x, texture.uvPosition.y + texture.uvSize.y);
-        Vertex topLeftCorner = new Vertex(pos,topLeftCornerOffset, topLeftCornerUV);
+        Vertex topLeftCorner = new Vertex(pos,topLeftCornerOffset, topLeftCornerUV, alpha, isHighlighted);
 
         vertices.add(bottomLeftCorner);
         vertices.add(bottomRightCorner);
@@ -109,6 +113,8 @@ public class Renderer {
                     buffer.put(vertex.offset.y);
                     buffer.put(vertex.uv.x);
                     buffer.put(vertex.uv.y);
+                    buffer.put(vertex.alpha);
+                    buffer.put(vertex.isHighlighted);
                 }
                 buffer.flip();
 
@@ -131,10 +137,19 @@ public class Renderer {
         return shader;
     }
 
+    public void setTileSize(float tileSize)
+    {
+        if(tileSize <= 0)
+            tileSize = 1.0f;
+        isometricMat.scale(1.0f / this.tileSize);
+        this.tileSize = tileSize;
+        isometricMat.scale(this.tileSize);
+    }
+
     private int vao;
     private int vbo;
     private Shader shader;
     private List<Vertex> vertices = new ArrayList<Vertex>();;
     private final Matrix3f isometricMat = new Matrix3f();
-    private final float TILE_SIZE = 80.0f;
+    private float tileSize = 80.0f;
 }

@@ -12,6 +12,7 @@ import org.main.GameObjects.GameObject;
 import org.main.GameObjects.GameObjectType;
 import org.main.Level;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,8 +29,10 @@ public class EditorScreen implements IScreen {
 
     private GameObject selectUpToGameObject;
 
-    Stack<Action> undoActions = new Stack<>();
-    Stack<Action> redoActions = new Stack<>();
+    private Stack<Action> undoActions = new Stack<>();
+    private Stack<Action> redoActions = new Stack<>();
+
+    private float[] tileSize = {80.0f};
 
     private ImInt index = new ImInt(0);
 
@@ -122,6 +125,9 @@ public class EditorScreen implements IScreen {
             shouldPlaceAfterPosChange = !shouldPlaceAfterPosChange;
         }
 
+        ImGui.sliderFloat("tileSize", tileSize, 10.0f, 100.0f);
+        Game.getCurrentActiveLevel().getRenderer().setTileSize(tileSize[0]);
+
         ImGui.text("Click ctrl while selecting to select all Game Objects in between");
         if (ImGui.collapsingHeader("GameObjects")) {
             int lineNum = 0;
@@ -153,6 +159,8 @@ public class EditorScreen implements IScreen {
                     }
                 }
                 lineNum++;
+
+                gameObject.setHighlight(selectedGameObjects.contains(gameObject));
             }
         }
         ImGui.end();

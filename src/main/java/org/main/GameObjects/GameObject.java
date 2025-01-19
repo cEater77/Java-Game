@@ -11,6 +11,7 @@ public class GameObject {
     protected Vector3f position = new Vector3f();
     protected AABB aabb = new AABB();
     protected AnimationController animationController = new AnimationController();
+    protected boolean isHighlighted = false;
 
     public GameObject(Vector3f position) {
         this.position = position;
@@ -65,6 +66,16 @@ public class GameObject {
     public String toString()
     {
         return "x:" + position.x + " y:" + position.y + " z:" + position.z + " ";
+    }
+
+    public void setHighlight(boolean highlight)
+    {
+        this.isHighlighted = highlight;
+    }
+
+    public boolean isHighlighted()
+    {
+        return isHighlighted;
     }
 
 

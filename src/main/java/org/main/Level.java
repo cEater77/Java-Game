@@ -26,7 +26,7 @@ public class Level {
     private ResourceManager resourceManager;
     private UIManager uiManager;
 
-    public Level(Renderer renderer, ResourceManager resourceManager,UIManager uiManager, String levelName) {
+    public Level(Renderer renderer, ResourceManager resourceManager, UIManager uiManager, String levelName) {
         this.renderer = renderer;
         this.resourceManager = resourceManager;
         this.uiManager = uiManager;
@@ -50,17 +50,16 @@ public class Level {
 
     private void draw() {
 
-        for(GameObject gameObject : gameObjects)
-        {
-            if(gameObject.getGameObjectType() == GameObjectType.PLAYER)
+        for (GameObject gameObject : gameObjects) {
+            if (gameObject.getGameObjectType() == GameObjectType.PLAYER)
                 continue;
             Animation animation = gameObject.getAnimationController().getCurrentAnimation();
-            renderer.renderTile(gameObject.getPosition(), animation.getCurrentFrameAnimationData());
+            renderer.renderTile(gameObject.getPosition(), animation.getCurrentFrameAnimationData(), animation.getCurrentBlendAnimationData(), gameObject.isHighlighted() ? 1.0f : 0.0f);
         }
 
         Player player = getPlayer();
         Animation animation = player.getAnimationController().getCurrentAnimation();
-        renderer.renderTile(player.getPosition(), animation.getCurrentFrameAnimationData());
+        renderer.renderTile(player.getPosition(), animation.getCurrentFrameAnimationData(), animation.getCurrentBlendAnimationData(), player.isHighlighted() ? 1.0f : 0.0f);
 
         renderer.getShader().setUniform("camPos", camera.getIsometricPosition().negate());
     }
@@ -106,22 +105,23 @@ public class Level {
         throw new IllegalArgumentException("Player doesn't exist");
     }
 
-    public List<GameObject> getGameObjects()
-    {
+    public List<GameObject> getGameObjects() {
         return gameObjects;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return levelName;
     }
 
-    public void addGameObject(GameObject gameObject)
-    {
+    public void addGameObject(GameObject gameObject) {
         gameObjects.add(gameObject);
     }
-    public void removeGameObject(GameObject gameObject)
-    {
+
+    public void removeGameObject(GameObject gameObject) {
         gameObjects.remove(gameObject);
+    }
+
+    public Renderer getRenderer() {
+        return renderer;
     }
 }

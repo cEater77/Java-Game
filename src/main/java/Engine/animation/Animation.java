@@ -82,11 +82,15 @@ public class Animation {
 
     public float getCurrentBlendAnimationData()
     {
+        if(blendAnimationComponent == null)
+            return 1.0f;
         return blendAnimationComponent.currentAlpha;
     }
 
     public Vector3f getCurrentPositionAnimationData()
     {
+        if(positionAnimationComponent == null)
+            return new Vector3f(0.0f);
         return positionAnimationComponent.getCurrentPositon();
     }
 }
