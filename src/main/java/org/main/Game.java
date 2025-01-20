@@ -45,28 +45,10 @@ public class Game {
     public void run() {
         System.out.println("Running Game...");
 
-        double previous = System.nanoTime();
-        double lag = 0.0;
-
         while (!glfwWindowShouldClose(window.getNativeWindow())) {
             window.beginFrame();
 
-            double current = System.nanoTime();
-            double elapsed = (current - previous) / 1_000_000.0f;
-            previous = current;
-            lag += elapsed;
-
-            System.out.println(elapsed);
-            System.out.println(window.getLastFrameDuration() * 1000);
-
-            currentActiveLevel.draw();
-            currentActiveLevel.handleInput(elapsed / 1000.0f);
-
-            while (lag >= MS_PER_UPDATE)
-            {
-                currentActiveLevel.tick();
-                lag -= MS_PER_UPDATE;
-            }
+            currentActiveLevel.tick();
 
             handleInput();
             renderer.renderBatch();
@@ -83,7 +65,7 @@ public class Game {
     }
 
     private void registerBlocks() {
-        Block woodBlock = new Block(new Vector3f(0.0f), resourceManager, true, Block.BlockTypeID.WOOD);
+        Block woodBlock = new Block(new Vector3f(0.0f), resourceManager, false, Block.BlockTypeID.WOOD);
         woodBlock.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("wood"))));
 
         blockRegistry.registerBlock(woodBlock);
@@ -151,8 +133,6 @@ public class Game {
     private static UIManager uiManager;
     private static Level currentActiveLevel;
     private static LevelBuilder levelBuilder;
-
-    public static double MS_PER_UPDATE = 50.0f;
 
     private ResourceManager resourceManager;
     private Renderer renderer;

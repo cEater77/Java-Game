@@ -88,6 +88,13 @@ public class Renderer {
     {
 
     }
+
+    public void renderFog(float fogEnd)
+    {
+        shader.setUniform("useFog", 1);
+        shader.setUniform("fogEnd", fogEnd);
+    }
+
     public void renderBatch()
     {
         shader.use();

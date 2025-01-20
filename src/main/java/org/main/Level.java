@@ -2,6 +2,7 @@ package org.main;
 
 import Engine.Window;
 import Engine.animation.Animation;
+import Engine.animation.AnimationController;
 import Engine.renderer.Renderer;
 import Engine.ResourceManager;
 import Engine.renderer.Texture;
@@ -41,12 +42,13 @@ public class Level {
         if (!isLevelPaused) {
             gameObjects.sort(Comparator
                     .comparingDouble((GameObject g) -> g.getPosition().z)
-                    .thenComparingDouble(g -> g.getPosition().y)
-                    .thenComparingDouble(g -> g.getPosition().x)
+                    .thenComparingDouble(g -> g.getPosition().x + g.getPosition().y)
             );
-            gameObjects.forEach(GameObject::update);
 
+            handleInput();
             handleCollision();
+            draw();
+
 
             if (uiManager.getCurrentScreen() instanceof PauseScreen) {
                 uiManager.popScreen();
@@ -56,13 +58,14 @@ public class Level {
                 uiManager.pushScreen(new PauseScreen());
             }
         }
-
     }
 
     public void draw() {
 
         for (GameObject gameObject : gameObjects) {
-            Animation animation = gameObject.getAnimationController().getCurrentAnimation();
+            AnimationController animationController = gameObject.getAnimationController();
+            animationController.update();
+            Animation animation = animationController.getCurrentAnimation();
             if (isLevelPaused)
                 animation.pauseAnimation();
             else
@@ -74,20 +77,21 @@ public class Level {
         Player player = getPlayer();
         Vector3f camPos = new Vector3f(player.getPosition());
         renderer.getShader().setUniform("camPos", camPos.negate());
+        renderer.renderFog(8.0f);
     }
 
     private void handleCollision() {
         for (GameObject e : gameObjects) {
             for (GameObject e2 : gameObjects) {
                 if (e != e2 && e.getAABB().isIntersecting(e2.getAABB())) {
-                    e.onCollision(e2);
-                    e2.onCollision(e);
+                        e.onCollision(e2);
+                        e.update();
                 }
             }
         }
     }
 
-    public void handleInput(double delta) {
+    public void handleInput() {
 
         long nativeWindow = Game.getWindow().getNativeWindow();
 
@@ -106,7 +110,7 @@ public class Level {
         if (GLFW.glfwGetKey(nativeWindow, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS)
             movement.add(MovementDirection.LEFT);
 
-        player.move(movement, delta);
+        player.move(movement);
     }
 
     private Player getPlayer() {

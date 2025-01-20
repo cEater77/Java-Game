@@ -27,9 +27,6 @@ public class GameObject {
     }
 
     public void update() {
-        if (animationController != null)
-            animationController.update();
-
         aabb.min = new Vector2f(position.x - 0.5f, position.y - 0.5f);
         aabb.max = new Vector2f(position.x + 0.5f, position.y + 0.5f);
     }
@@ -77,7 +74,6 @@ public class GameObject {
     {
         return isHighlighted;
     }
-
 
     public void serialize(DataOutputStream stream) throws IOException {
         stream.writeFloat(position.x);

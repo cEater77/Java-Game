@@ -14,11 +14,15 @@ uniform vec3 camPos;
 out vec2 tex;
 out float alpha;
 out float isHighlighted;
+out vec3 fragPosition;
 
 void main()
 {
-    gl_Position = projection * vec4(vec3(offset,0) + isometricView * position + isometricView * camPos + vec3(worldOrigin,0), 1);
+    vec2 transformedCamPos = vec2(isometricView * camPos);
+    gl_Position = projection * vec4(vec3(offset,0) + isometricView * position + vec3(transformedCamPos, 1) + vec3(worldOrigin,0), 1);
+
     tex = aTex;
     alpha = aAlpha;
     isHighlighted = aIsHighlighted;
+    fragPosition = position;
 }

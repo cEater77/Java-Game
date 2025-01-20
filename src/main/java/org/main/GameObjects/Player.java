@@ -32,7 +32,7 @@ public class Player extends GameObject {
     }
 
     public Player(ResourceManager resourceManager) {
-        super(new Vector3f(0.0f, 0.0f, 1.0f));
+        super(new Vector3f(0.0f, 0.0f, 0.9f));
         setupAnimations(resourceManager);
     }
 
@@ -48,20 +48,19 @@ public class Player extends GameObject {
 
     @Override
     public void onCollision(GameObject other) {
-
         switch (other.getGameObjectType()) {
-            case BLOCK:
+            case BLOCK: {
                 if (((Block) other).ignoresCollision()) return;
-            default: {
                 Vector2f offset = aabb.getMinTranslationVector(other.getAABB());
-                setPosition(new Vector3f(-offset.x + position.x, -offset.y + position.y, 0));
+                setPosition(new Vector3f(-offset.x + position.x, -offset.y + position.y, position.z));
             }
         }
     }
 
-    public void move(List<MovementDirection> directions, double delta) {
+    public void move(List<MovementDirection> directions) {
+
         Vector2f playerPositionDelta = new Vector2f(0.0f, 0.0f);
-        float speed = speedInMeterPerSecond * (float)delta;
+        float speed = speedInMeterPerSecond * Game.getWindow().getLastFrameDuration();
 
         for (MovementDirection direction : directions) {
             switch (direction) {
@@ -78,6 +77,7 @@ public class Player extends GameObject {
                     playerPositionDelta.y -= speed;
                     break;
             }
+
         }
 
         if (playerPositionDelta.x != 0.0f || playerPositionDelta.y != 0.0f)
