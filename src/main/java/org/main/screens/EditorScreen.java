@@ -39,6 +39,8 @@ public class EditorScreen implements IScreen {
     private ImInt levelIndex = new ImInt(0);
     private ImString levelName = new ImString();
 
+    private float[] fogRadius = {10.0f};
+
     class Action
     {
 
@@ -89,6 +91,13 @@ public class EditorScreen implements IScreen {
         for(int i = 0; i < levelNames.length; i++)levelNames[i] = levels.get(i).getName();
         ImGui.combo("Levels",levelIndex, levelNames);
         Game.setCurrentActiveLevel(Game.getLevelBuilder().getAllLevels().get(levelIndex.get()));
+
+        if(ImGui.radioButton("Toggle Fog", Game.getCurrentActiveLevel().useFog))
+        {
+            Game.getCurrentActiveLevel().useFog =  !Game.getCurrentActiveLevel().useFog;
+        }
+        ImGui.sliderFloat("Fog Radius", fogRadius, 1.0f, 50.0f);
+        Game.getCurrentActiveLevel().fogRadius = fogRadius[0];
 
         ImFloat x = new ImFloat(currentPos.x), y = new ImFloat(currentPos.y), z = new ImFloat(currentPos.z);
         ImGui.inputFloat("x", x, 1.0f);

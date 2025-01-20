@@ -25,6 +25,9 @@ public class Level {
     private boolean isLevelPaused = false;
     private boolean isLevelFinished = false;
 
+    public boolean useFog = true;
+    public float fogRadius = 10.0f;
+
     private Renderer renderer;
     private ResourceManager resourceManager;
     private UIManager uiManager;
@@ -77,7 +80,9 @@ public class Level {
         Player player = getPlayer();
         Vector3f camPos = new Vector3f(player.getPosition());
         renderer.getShader().setUniform("camPos", camPos.negate());
-        renderer.renderFog(8.0f);
+        renderer.getShader().setUniform("useFog", useFog ? 1 : 0);
+
+        renderer.renderFog(fogRadius);
     }
 
     private void handleCollision() {
