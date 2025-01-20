@@ -40,9 +40,9 @@ public class Level {
 
         if (!isLevelPaused) {
             gameObjects.sort(Comparator
-                    .comparingDouble((GameObject g) -> g.getPosition().x)
+                    .comparingDouble((GameObject g) -> g.getPosition().z)
                     .thenComparingDouble(g -> g.getPosition().y)
-                    .thenComparingDouble(g -> g.getPosition().z)
+                    .thenComparingDouble(g -> g.getPosition().x)
             );
             gameObjects.forEach(GameObject::update);
 
@@ -62,9 +62,6 @@ public class Level {
     public void draw() {
 
         for (GameObject gameObject : gameObjects) {
-            if (gameObject.getGameObjectType() == GameObjectType.PLAYER)
-                continue;
-
             Animation animation = gameObject.getAnimationController().getCurrentAnimation();
             if (isLevelPaused)
                 animation.pauseAnimation();
@@ -75,9 +72,6 @@ public class Level {
         }
 
         Player player = getPlayer();
-        Animation animation = player.getAnimationController().getCurrentAnimation();
-        renderer.renderTile(player.getPosition(), animation.getCurrentFrameAnimationData(), animation.getCurrentBlendAnimationData(), player.isHighlighted() ? 1.0f : 0.0f);
-
         Vector3f camPos = new Vector3f(player.getPosition());
         renderer.getShader().setUniform("camPos", camPos.negate());
     }

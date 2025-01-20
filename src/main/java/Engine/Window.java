@@ -96,12 +96,6 @@ public class Window {
             viewportHeight = height;
         }
 
-        if (frameBeginSec == 0) {
-            lastFrameDurationSec = 0;
-        } else {
-            lastFrameDurationSec = (System.nanoTime() - frameBeginSec) / 1_000_000_000.0f;
-        }
-
         timePassedInSec += lastFrameDurationSec;
         totalGameTimeInSec += lastFrameDurationSec;
         currentFrameCount++;
@@ -115,6 +109,12 @@ public class Window {
         GL33.glViewport(0,0, viewportWidth, viewportHeight);
         glfwSwapBuffers(nativeWindow);
         glfwPollEvents();
+
+        if (frameBeginSec == 0) {
+            lastFrameDurationSec = 0;
+        } else {
+            lastFrameDurationSec = (System.nanoTime() - frameBeginSec) / 1_000_000_000.0f;
+        }
     }
 
     public void toggleFullscreen() {

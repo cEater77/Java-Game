@@ -32,6 +32,7 @@ public class Player extends GameObject {
     }
 
     public Player(ResourceManager resourceManager) {
+        super(new Vector3f(0.0f, 0.0f, 1.0f));
         setupAnimations(resourceManager);
     }
 
@@ -81,7 +82,7 @@ public class Player extends GameObject {
 
         if (playerPositionDelta.x != 0.0f || playerPositionDelta.y != 0.0f)
             playerPositionDelta.normalize(speed);
-        setPosition(new Vector3f(playerPositionDelta.x + position.x, playerPositionDelta.y + position.y, 0.0f));
+        setPosition(new Vector3f(playerPositionDelta.x + position.x, playerPositionDelta.y + position.y, 1.0f));
 
         if (playerPositionDelta.length() == 0)
             playerState = PlayerState.IDLE;

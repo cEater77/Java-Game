@@ -5,6 +5,8 @@ import Engine.animation.Animation;
 import Engine.animation.AnimationController;
 import Engine.renderer.Renderer;
 import Engine.renderer.Texture;
+import imgui.ImGui;
+import imgui.flag.ImGuiKey;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.main.GameObjects.Block;
@@ -36,28 +38,12 @@ public class Game {
 
         registerBlocks();
 
-        glfwSetKeyCallback(window.getNativeWindow(), (long nativeWindow, int key, int scancode, int action, int mods) -> {
-            if (key == GLFW.GLFW_KEY_F11 && action == GLFW.GLFW_PRESS) {
-                window.toggleFullscreen();
-            }
-
-            if(currentActiveLevel != null)
-            {
-                if (key == GLFW.GLFW_KEY_P && action == GLFW.GLFW_PRESS) {
-                    if(currentActiveLevel.isPaused())
-                        currentActiveLevel.resume();
-                    else
-                        currentActiveLevel.pause();
-                }
-            }
-        });
+        levelBuilder.loadAllLevelsInDirectory(Paths.get("GameData/Levels"));
+        currentActiveLevel = levelBuilder.getLevel("test");
     }
 
     public void run() {
         System.out.println("Running Game...");
-
-        levelBuilder.loadAllLevelsInDirectory(Paths.get("GameData/Levels"));
-        currentActiveLevel = levelBuilder.getLevel("abc");
 
         double previous = System.nanoTime();
         double lag = 0.0;
@@ -70,9 +56,11 @@ public class Game {
             previous = current;
             lag += elapsed;
 
+            System.out.println(elapsed);
+            System.out.println(window.getLastFrameDuration() * 1000);
+
             currentActiveLevel.draw();
             currentActiveLevel.handleInput(elapsed / 1000.0f);
-            renderer.renderBatch();
 
             while (lag >= MS_PER_UPDATE)
             {
@@ -80,6 +68,8 @@ public class Game {
                 lag -= MS_PER_UPDATE;
             }
 
+            handleInput();
+            renderer.renderBatch();
             uiManager.update();
             window.endFrame();
         }
@@ -112,6 +102,23 @@ public class Game {
         barrierBlock.setAnimationController(new AnimationController());
 
         blockRegistry.registerBlock(barrierBlock);
+    }
+
+    private void handleInput()
+    {
+        if (ImGui.isKeyPressed(ImGuiKey.F11)) {
+            window.toggleFullscreen();
+        }
+
+        if(currentActiveLevel != null)
+        {
+            if (ImGui.isKeyPressed(ImGuiKey.P)) {
+                if(currentActiveLevel.isPaused())
+                    currentActiveLevel.resume();
+                else
+                    currentActiveLevel.pause();
+            }
+        }
     }
 
     public static Window getWindow() {

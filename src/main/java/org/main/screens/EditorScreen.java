@@ -157,9 +157,7 @@ public class EditorScreen implements IScreen {
             for (GameObject gameObject : gameObjects) {
                 if (ImGui.selectable(lineNum + " " + gameObject.toString(), selectedGameObjects.contains(gameObject))) {
 
-                    System.out.println("test");
-                    if (ImGui.isKeyDown(ImGuiKey.M)) {
-                        System.out.println("hello");
+                    if (ImGui.isKeyDown(ImGuiKey.LeftCtrl)) {
                         GameObject startSelectedGameObject = selectedGameObjects.get(selectedGameObjects.size() - 1);
                         int startIndex = Math.min(gameObjects.indexOf(startSelectedGameObject), gameObjects.indexOf(gameObject));
                         int endIndex = Math.max(gameObjects.indexOf(startSelectedGameObject), gameObjects.indexOf(gameObject));

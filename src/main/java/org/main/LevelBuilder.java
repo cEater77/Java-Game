@@ -33,7 +33,7 @@ public class LevelBuilder {
     public void createLevel(String levelName)
     {
         Level level = new Level(renderer, resourceManager, uiManager, levelName);
-        level.addGameObject(new Player(new Vector3f(0.0f), resourceManager));
+        level.addGameObject(new Player(new Vector3f(0.0f, 0.0f, 1.0f), resourceManager));
         levels.add(level);
     }
 
