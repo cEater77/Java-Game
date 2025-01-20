@@ -11,6 +11,7 @@ import org.main.GameObjects.Block;
 import org.main.GameObjects.GameObject;
 import org.main.GameObjects.GameObjectType;
 import org.main.Level;
+import org.main.LevelBuilder;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -35,6 +36,8 @@ public class EditorScreen implements IScreen {
     private float[] tileSize = {80.0f};
 
     private ImInt index = new ImInt(0);
+    private ImInt levelIndex = new ImInt(0);
+    private ImString levelName = new ImString();
 
     class Action
     {
@@ -67,6 +70,26 @@ public class EditorScreen implements IScreen {
         ImGui.begin("EditorScreen");
         if (ImGui.button("Go to start screen"))
             Game.getUiManager().pushScreen(new StartScreen());
+
+
+        if(ImGui.button("New Level"))
+        {
+            LevelBuilder levelBuilder = Game.getLevelBuilder();
+            levelBuilder.createLevel(levelName.get());
+            Level level = levelBuilder.getLevel(levelName.get());
+            Game.setCurrentActiveLevel(level);
+            levelIndex = new ImInt(levelBuilder.getAllLevels().indexOf(level));
+        }
+
+        ImGui.inputText("Level Name", levelName);
+
+
+        List<Level> levels = Game.getLevelBuilder().getAllLevels();
+        String[] levelNames = new String[levels.size()];
+        for(int i = 0; i < levelNames.length; i++)levelNames[i] = levels.get(i).getName();
+        ImGui.combo("Levels",levelIndex, levelNames);
+        Game.setCurrentActiveLevel(Game.getLevelBuilder().getAllLevels().get(levelIndex.get()));
+
         ImFloat x = new ImFloat(currentPos.x), y = new ImFloat(currentPos.y), z = new ImFloat(currentPos.z);
         ImGui.inputFloat("x", x, 1.0f);
         ImGui.inputFloat("y", y, 1.0f);
@@ -120,7 +143,6 @@ public class EditorScreen implements IScreen {
             }
         }
 
-        ImGui.sameLine();
         if (ImGui.radioButton("Place Automatically when changing the Position", shouldPlaceAfterPosChange)) {
             shouldPlaceAfterPosChange = !shouldPlaceAfterPosChange;
         }
@@ -135,7 +157,9 @@ public class EditorScreen implements IScreen {
             for (GameObject gameObject : gameObjects) {
                 if (ImGui.selectable(lineNum + " " + gameObject.toString(), selectedGameObjects.contains(gameObject))) {
 
-                    if (ImGui.isKeyDown(ImGuiKey.LeftCtrl)) {
+                    System.out.println("test");
+                    if (ImGui.isKeyDown(ImGuiKey.M)) {
+                        System.out.println("hello");
                         GameObject startSelectedGameObject = selectedGameObjects.get(selectedGameObjects.size() - 1);
                         int startIndex = Math.min(gameObjects.indexOf(startSelectedGameObject), gameObjects.indexOf(gameObject));
                         int endIndex = Math.max(gameObjects.indexOf(startSelectedGameObject), gameObjects.indexOf(gameObject));

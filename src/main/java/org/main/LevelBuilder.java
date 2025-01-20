@@ -39,6 +39,7 @@ public class LevelBuilder {
 
     public void loadLevel(Path levelPath) {
         String fileName = levelPath.getFileName().toString();
+        fileName = fileName.substring(0, fileName.length() - 4);
         try (DataInputStream stream = new DataInputStream(Files.newInputStream(levelPath))) {
             Level level = new Level(renderer, resourceManager, uiManager, fileName);
             int gameObjectCount = stream.readInt();
@@ -64,6 +65,25 @@ public class LevelBuilder {
         }
     }
 
+    public void loadAllLevelsInDirectory(Path directoryPath)
+    {
+        File directory = new File(String.valueOf(directoryPath));
+        if (directory.exists() && directory.isDirectory()) {
+            File[] files = directory.listFiles();
+
+            if (files != null) {
+                for (File file : files) {
+                    String fileString = file.toString();
+                    if (file.isFile() && fileString.substring(fileString.indexOf(".")).equals(".bin")) {
+                        loadLevel(file.toPath());
+                    }
+                }
+            }
+        } else {
+            System.out.println("The provided path is not a valid directory.");
+        }
+    }
+
     public Level getLevel(String levelName) {
         for (Level level : levels) {
             if (level.getName().equals(levelName))
@@ -75,7 +95,7 @@ public class LevelBuilder {
 
     public void saveLevel(Level level) {
         List<GameObject> gameObjects = level.getGameObjects();
-        String filePath = "GameData/levels/test.bin";
+        String filePath = "GameData/levels/" + level.getName() + ".bin";
         try (DataOutputStream stream = new DataOutputStream(Files.newOutputStream(Paths.get(filePath)))) {
             stream.writeInt(gameObjects.size());
             for (GameObject gameObject : gameObjects) {
@@ -87,4 +107,13 @@ public class LevelBuilder {
         }
     }
 
+    public List<Level> getAllLevels()
+    {
+        return levels;
+    }
+
+    public void saveAllLevels()
+    {
+        levels.forEach(this::saveLevel);
+    }
 }

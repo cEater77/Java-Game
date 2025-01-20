@@ -124,6 +124,11 @@ public class Level {
         throw new IllegalArgumentException("Player doesn't exist");
     }
 
+    public void Finish()
+    {
+
+    }
+
     public List<GameObject> getGameObjects() {
         return gameObjects;
     }

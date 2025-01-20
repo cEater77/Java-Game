@@ -56,12 +56,8 @@ public class Game {
     public void run() {
         System.out.println("Running Game...");
 
-        levelBuilder.loadLevel(Paths.get("GameData/Levels/test.bin"));
-        currentActiveLevel = levelBuilder.getLevel("test.bin");
-        if (currentActiveLevel == null) {
-            levelBuilder.createLevel("test.bin");
-            currentActiveLevel = levelBuilder.getLevel("test.bin");
-        }
+        levelBuilder.loadAllLevelsInDirectory(Paths.get("GameData/Levels"));
+        currentActiveLevel = levelBuilder.getLevel("abc");
 
         double previous = System.nanoTime();
         double lag = 0.0;
@@ -88,7 +84,7 @@ public class Game {
             window.endFrame();
         }
 
-        levelBuilder.saveLevel(currentActiveLevel);
+        levelBuilder.saveAllLevels();
     }
 
     public void deinit() {
@@ -133,16 +129,26 @@ public class Game {
     public static Level getCurrentActiveLevel() {
         return currentActiveLevel;
     }
+    public static void setCurrentActiveLevel(Level level)
+    {
+        currentActiveLevel = level;
+    }
+
+    public static LevelBuilder getLevelBuilder()
+    {
+        return levelBuilder;
+    }
 
     private static Window window;
     private static BlockRegistry blockRegistry;
     private static UIManager uiManager;
     private static Level currentActiveLevel;
+    private static LevelBuilder levelBuilder;
+
     public static double MS_PER_UPDATE = 50.0f;
 
     private ResourceManager resourceManager;
     private Renderer renderer;
-    private LevelBuilder levelBuilder;
 
     private GameState gamestate;
 
