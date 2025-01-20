@@ -83,7 +83,7 @@ public class StartScreen implements IScreen {
             }
         }
 
-        ImGui.text(""+ visibilty[0]);
+        ImGui.text("");
         ImGui.sameLine(0, ImGui.getWindowSizeX() - ((ImGui.getWindowSizeX()-10)/3));
         ImGui.text("Visibility:");
 
