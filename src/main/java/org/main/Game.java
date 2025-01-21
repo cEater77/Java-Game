@@ -65,7 +65,7 @@ public class Game {
     }
 
     private void registerBlocks() {
-        Block woodBlock = new Block(new Vector3f(0.0f), resourceManager, false, Block.BlockTypeID.WOOD);
+        Block woodBlock = new Block(new Vector3f(0.0f), resourceManager, true, Block.BlockTypeID.WOOD);
         woodBlock.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("wood"))));
 
         blockRegistry.registerBlock(woodBlock);
