@@ -12,10 +12,14 @@ public class GameObject {
     protected AABB aabb = new AABB();
     protected AnimationController animationController = new AnimationController();
     protected boolean isHighlighted = false;
+    protected float collisionSizeMultiplier = 0.5f;
 
     public GameObject(Vector3f position) {
         this.position = position;
-        this.aabb = new AABB(new Vector2f(position.x - 0.5f, position.y - 0.5f), new Vector2f(position.x + 0.5f, position.y + 0.5f));
+        this.aabb = new AABB(
+                new Vector2f(position.x - collisionSizeMultiplier, position.y - collisionSizeMultiplier),
+                new Vector2f(position.x + collisionSizeMultiplier, position.y + collisionSizeMultiplier)
+        );
     }
 
     public GameObject() {
@@ -27,8 +31,8 @@ public class GameObject {
     }
 
     public void update() {
-        aabb.min = new Vector2f(position.x - 0.5f, position.y - 0.5f);
-        aabb.max = new Vector2f(position.x + 0.5f, position.y + 0.5f);
+        aabb.min = new Vector2f(position.x - collisionSizeMultiplier, position.y - collisionSizeMultiplier);
+        aabb.max = new Vector2f(position.x + collisionSizeMultiplier, position.y + collisionSizeMultiplier);
     }
 
     public void onCollision(GameObject other) {
@@ -85,5 +89,6 @@ public class GameObject {
         position.x = stream.readFloat();
         position.y = stream.readFloat();
         position.z = stream.readFloat();
+        update();
     }
 }

@@ -53,4 +53,8 @@ public class AnimationComponent {
     {
         elapsedTime = 0;
     }
+    public float getProgress()
+    {
+        return progress;
+    }
 }

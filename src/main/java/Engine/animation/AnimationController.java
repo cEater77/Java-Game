@@ -74,7 +74,7 @@ public class AnimationController {
 
     public void update() {
 
-        float deltaTime = (float)Game.getWindow().getLastFrameDuration();
+        float deltaTime = Game.getWindow().getLastFrameDuration();
 
         if (!transitions.containsKey(currentAnimationName)) {
             getCurrentAnimation().update(deltaTime);

@@ -3,7 +3,6 @@ package org.main.GameObjects;
 import Engine.ResourceManager;
 import Engine.animation.Animation;
 import Engine.animation.AnimationController;
-import Engine.animation.FrameAnimationComponent;
 import Engine.renderer.Texture;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -14,12 +13,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Player extends GameObject {
 
-    private float speedInMeterPerSecond = 10.0f;
+    private float speedInMeterPerSecond = 5.0f;
     private PlayerState playerState = PlayerState.IDLE;
+    private MovementDirection direction = MovementDirection.UP;
 
     private enum PlayerState {
         IDLE,
@@ -32,13 +33,15 @@ public class Player extends GameObject {
     }
 
     public Player(ResourceManager resourceManager) {
-        super(new Vector3f(0.0f, 0.0f, 0.9f));
+        super(new Vector3f(0.0f, 0.0f, 1.0f));
         setupAnimations(resourceManager);
     }
 
     @Override
     public void update() {
+        collisionSizeMultiplier = 0.3f;
         super.update();
+        animationController.setDirection(direction);
     }
 
     @Override
@@ -50,7 +53,8 @@ public class Player extends GameObject {
     public void onCollision(GameObject other) {
         switch (other.getGameObjectType()) {
             case BLOCK: {
-                if (((Block) other).ignoresCollision()) return;
+                Block block = (Block)other;
+                if (block.ignoresCollision() || block.getBlockType() == Block.BlockTypeID.FINISH) return;
                 Vector2f offset = aabb.getMinTranslationVector(other.getAABB());
                 setPosition(new Vector3f(-offset.x + position.x, -offset.y + position.y, position.z));
             }
@@ -70,10 +74,10 @@ public class Player extends GameObject {
                 case RIGHT:
                     playerPositionDelta.x -= speed;
                     break;
-                case BACKWARD:
+                case DOWN:
                     playerPositionDelta.y += speed;
                     break;
-                case FORWARD:
+                case UP:
                     playerPositionDelta.y -= speed;
                     break;
             }
@@ -83,6 +87,10 @@ public class Player extends GameObject {
         if (playerPositionDelta.x != 0.0f || playerPositionDelta.y != 0.0f)
             playerPositionDelta.normalize(speed);
         setPosition(new Vector3f(playerPositionDelta.x + position.x, playerPositionDelta.y + position.y, 1.0f));
+
+        MovementDirection currentDirection = MovementDirection.toSingleDirection(directions);
+        if(currentDirection != MovementDirection.NONE)
+            direction = currentDirection;
 
         if (playerPositionDelta.length() == 0)
             playerState = PlayerState.IDLE;
@@ -99,18 +107,32 @@ public class Player extends GameObject {
     }
 
     private void setupAnimations(ResourceManager resourceManager) {
-        List<Texture> frames = new ArrayList<>();
-        frames.add(resourceManager.getTexture("grass"));
-        frames.add(resourceManager.getTexture("snow_grass"));
-        frames.add(resourceManager.getTexture("wood"));
-        Animation idle = new Animation();
-        idle.addFrameAnimation(1.0f, true, frames.subList(0, 2));
 
-        Animation walking = new Animation();
-        walking.addFrameAnimation(1.0f, true, frames.subList(2, 3));
+        String[] directionFrameNames = {
+                "_Character_UpLeft", "_Character_DownRight","_Character_Left",  "_Character_Right",
+                "_Character_Up", "_Character_Down","_Character_UpRight", "_Character_DownLeft"
+        };
 
-        animationController = new AnimationController("idle", MovementDirection.NONE, idle);
-        animationController.addAnimation("walking", MovementDirection.NONE, walking);
+        for(int i = 1; i <= directionFrameNames.length; i++)
+        {
+            Animation idle = new Animation();
+            idle.addFrameAnimation(1.0f, false, Arrays.asList(resourceManager.getTexture("00" + directionFrameNames[i - 1])));
+            if(i == 1) {
+                animationController = new AnimationController("idle", MovementDirection.values()[i], idle);
+            }
+            else {
+                animationController.addAnimation("idle", MovementDirection.values()[i], idle);
+            }
+
+            Animation walk = new Animation();
+            List<Texture> frames = new ArrayList<>();
+            for(int j = 0; j < 4; j++)
+            {
+                frames.add(resourceManager.getTexture("0" + j + directionFrameNames[i - 1]));
+            }
+            walk.addFrameAnimation(0.50f, true, frames);
+            animationController.addAnimation("walking", MovementDirection.values()[i], walk);
+        }
 
         animationController.addTransition("idle", "walking", () -> playerState == PlayerState.WALKING);
         animationController.addTransition("walking", "idle", () -> playerState == PlayerState.IDLE);
@@ -119,11 +141,10 @@ public class Player extends GameObject {
     @Override
     public void serialize(DataOutputStream stream) throws IOException {
         stream.writeInt(getGameObjectType().ordinal());
-        super.serialize(stream);
     }
 
     @Override
     public void deserialize(DataInputStream stream) throws IOException {
-        super.deserialize(stream);
+
     }
 }

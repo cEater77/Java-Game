@@ -59,12 +59,13 @@ public class ResourceManager {
         GL33.glActiveTexture(GL33.GL_TEXTURE0 + 15);
         GL33.glBindTexture(GL33.GL_TEXTURE_2D, 0);
 
-        JSONArray textureDefs = new JSONObject(getStringFromFile("assets/texture/textureDefs.json")).getJSONArray("textures");
+        JSONArray textureDefs = new JSONObject(getStringFromFile("assets/texture/texture_defs.json")).getJSONArray("textures");
         for (int i = 0; i < textureDefs.length(); i++) {
             JSONObject texture = textureDefs.getJSONObject(i);
-            Vector2f uvPos = new Vector2f((float) texture.getJSONArray("position").getInt(0) / width, (float) texture.getJSONArray("position").getInt(1) / height);
-            Vector2f uvSize = new Vector2f((float) Texture.DEFAULT_TEXTURE_WIDTH / width, (float) Texture.DEFAULT_TEXTURE_HEIGHT / height);
-            this.textures.put(texture.getString("name"), new Texture(uvPos, uvSize));
+            JSONObject texturePlace = texture.getJSONObject("frame");
+            Vector2f uvPos = new Vector2f((float) texturePlace.getInt("x") / width, (float) texturePlace.getInt("y") / height);
+            Vector2f uvSize = new Vector2f((float) texturePlace.getInt("w") / width, (float) texturePlace.getInt("h") / height);
+            this.textures.put(texture.getString("filename"), new Texture(uvPos, uvSize));
         }
     }
 

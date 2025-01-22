@@ -152,6 +152,11 @@ public class Renderer {
         isometricMat.scale(this.tileSize);
     }
 
+    public float getTileSize()
+    {
+        return tileSize;
+    }
+
     private int vao;
     private int vbo;
     private Shader shader;

@@ -10,6 +10,7 @@ import org.main.Game;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 
@@ -17,7 +18,7 @@ public class Block extends GameObject {
 
     private boolean ignoreCollision;
     private BlockTypeID typeID;
-    private Consumer<GameObject> collisionCallback;
+    private BiConsumer<Block, GameObject> collisionCallback;
 
     public enum BlockTypeID {
         WOOD,
@@ -59,7 +60,7 @@ public class Block extends GameObject {
         super.onCollision(other);
 
         if(collisionCallback != null)
-            collisionCallback.accept(other);
+            collisionCallback.accept(this, other);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class Block extends GameObject {
         return ignoreCollision;
     }
 
-    public void setCollisionCallback(Consumer<GameObject> collisionCallback)
+    public void setCollisionCallback(BiConsumer<Block, GameObject> collisionCallback)
     {
         this.collisionCallback = collisionCallback;
     }

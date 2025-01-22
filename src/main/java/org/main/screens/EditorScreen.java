@@ -33,7 +33,7 @@ public class EditorScreen implements IScreen {
     private Stack<Action> undoActions = new Stack<>();
     private Stack<Action> redoActions = new Stack<>();
 
-    private float[] tileSize = {80.0f};
+    private float[] tileSize = new float[1];
 
     private ImInt index = new ImInt(0);
     private ImInt levelIndex = new ImInt(0);
@@ -43,7 +43,6 @@ public class EditorScreen implements IScreen {
 
     class Action
     {
-
         public Action(List<GameObject> data, ActionType type)
         {
             this.actionData = data;
@@ -72,7 +71,6 @@ public class EditorScreen implements IScreen {
         ImGui.begin("EditorScreen");
         if (ImGui.button("Go to start screen"))
             Game.getUiManager().pushScreen(new StartScreen());
-
 
         if(ImGui.button("New Level"))
         {
@@ -156,6 +154,7 @@ public class EditorScreen implements IScreen {
             shouldPlaceAfterPosChange = !shouldPlaceAfterPosChange;
         }
 
+        tileSize[0] = Game.getCurrentActiveLevel().getRenderer().getTileSize();
         ImGui.sliderFloat("tileSize", tileSize, 30.0f, 150.0f);
         Game.getCurrentActiveLevel().getRenderer().setTileSize(tileSize[0]);
 

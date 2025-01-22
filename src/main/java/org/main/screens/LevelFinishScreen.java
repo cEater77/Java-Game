@@ -1,5 +1,7 @@
 package org.main.screens;
 
+import imgui.ImGui;
+
 public class LevelFinishScreen implements IScreen {
     @Override
     public void update() {
@@ -8,7 +10,8 @@ public class LevelFinishScreen implements IScreen {
 
     @Override
     public void render() {
-
+        ImGui.begin("finish screen");
+        ImGui.end();
     }
 
     @Override

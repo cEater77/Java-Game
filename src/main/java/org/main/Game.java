@@ -10,6 +10,7 @@ import imgui.flag.ImGuiKey;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.main.GameObjects.Block;
+import org.main.GameObjects.GameObjectType;
 import org.main.GameObjects.Player;
 
 import java.nio.file.Path;
@@ -39,7 +40,7 @@ public class Game {
         registerBlocks();
 
         levelBuilder.loadAllLevelsInDirectory(Paths.get("GameData/Levels"));
-        currentActiveLevel = levelBuilder.getLevel("test");
+        currentActiveLevel = levelBuilder.getLevel("Level1");
     }
 
     public void run() {
@@ -65,8 +66,8 @@ public class Game {
     }
 
     private void registerBlocks() {
-        Block woodBlock = new Block(new Vector3f(0.0f), resourceManager, true, Block.BlockTypeID.WOOD);
-        woodBlock.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("wood"))));
+        Block woodBlock = new Block(new Vector3f(0.0f), resourceManager, false, Block.BlockTypeID.WOOD);
+        woodBlock.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("dirt"))));
 
         blockRegistry.registerBlock(woodBlock);
 
@@ -75,8 +76,17 @@ public class Game {
 
         blockRegistry.registerBlock(darkWoodBlock);
 
-        Block finishBlock = new Block(new Vector3f(0.0f), resourceManager, true, Block.BlockTypeID.FINISH);
-        finishBlock.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("endPoint"))));
+        Block finishBlock = new Block(new Vector3f(0.0f), resourceManager, false, Block.BlockTypeID.FINISH);
+        finishBlock.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("dark_log"))));
+        finishBlock.setCollisionCallback((block,other) ->
+        {
+            if(other.getGameObjectType() == GameObjectType.PLAYER)
+            {
+                float aabbAccordance = other.getAABB().getMinTranslationVector(block.getAABB()).length();
+                if(aabbAccordance > 0.55f)
+                    Game.getCurrentActiveLevel().finish();
+            }
+        });
 
         blockRegistry.registerBlock(finishBlock);
 
