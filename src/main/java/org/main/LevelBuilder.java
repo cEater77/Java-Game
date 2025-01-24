@@ -87,7 +87,7 @@ public class LevelBuilder {
 
     public void saveLevel(Level level) {
         List<GameObject> gameObjects = level.getGameObjects();
-        String filePath = "res/GameData/levels/" + level.getName() + ".bin";
+        String filePath = "src/main/resources/assets/GameData/levels/" + level.getName() + ".bin";
         try (DataOutputStream stream = new DataOutputStream(Files.newOutputStream(Paths.get(filePath)))) {
             stream.writeInt(gameObjects.size());
             for (GameObject gameObject : gameObjects) {

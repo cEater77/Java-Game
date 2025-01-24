@@ -9,7 +9,9 @@ import org.joml.*;
 import org.main.GameObjects.*;
 import org.main.screens.StartScreen;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
@@ -32,7 +34,7 @@ public class Game {
         window = new Window(800, 800, "Java Game");
         resourceManager = new ResourceManager();
 
-        resourceManager.loadShader("default", "assets/shader/default.vert", "assets/shader/default.frag");
+        resourceManager.loadShader("default", "src/main/resources/assets/shader/default.vert", "src/main/resources/assets/shader/default.frag");
 
         renderer = new Renderer(resourceManager.getShader("default"));
         uiManager = new UIManager();
@@ -43,7 +45,8 @@ public class Game {
         // die levelen diese auch laden können
         registerBlocks();
 
-        levelBuilder.loadAllLevelsInDirectory(Paths.get("res/GameData/Levels"));
+        levelBuilder.loadAllLevelsInDirectory(Paths.get("src/main/resources/assets/GameData/Levels"));
+
 
         uiManager.pushScreen(new StartScreen());
     }
@@ -54,7 +57,7 @@ public class Game {
         while (!glfwWindowShouldClose(window.getNativeWindow())) {
             window.beginFrame();
 
-            if(currentActiveLevel != null)
+            if (currentActiveLevel != null)
                 currentActiveLevel.tick();
 
             handleInput();
@@ -109,12 +112,11 @@ public class Game {
 
         Block finishBlock = new Block(new Vector3f(0.0f), resourceManager, false, Block.BlockTypeID.FINISH);
         finishBlock.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("finish"))));
-        finishBlock.setCollisionCallback((block,other) ->
+        finishBlock.setCollisionCallback((block, other) ->
         {
-            if(other.getGameObjectType() == GameObjectType.PLAYER)
-            {
+            if (other.getGameObjectType() == GameObjectType.PLAYER) {
                 float aabbAccordance = other.getAABB().getMinTranslationVector(block.getAABB()).length();
-                if(aabbAccordance > 0.55f)
+                if (aabbAccordance > 0.55f)
                     Game.getCurrentActiveLevel().finish();
             }
         });
@@ -122,16 +124,14 @@ public class Game {
         blockRegistry.registerBlock(finishBlock);
     }
 
-    private void handleInput()
-    {
+    private void handleInput() {
         if (ImGui.isKeyPressed(ImGuiKey.F11)) {
             window.toggleFullscreen();
         }
 
-        if(currentActiveLevel != null)
-        {
+        if (currentActiveLevel != null) {
             if (ImGui.isKeyPressed(ImGuiKey.P)) {
-                if(currentActiveLevel.isPaused())
+                if (currentActiveLevel.isPaused())
                     currentActiveLevel.resume();
                 else
                     currentActiveLevel.pause();
@@ -154,13 +154,12 @@ public class Game {
     public static Level getCurrentActiveLevel() {
         return currentActiveLevel;
     }
-    public static void setCurrentActiveLevel(Level level)
-    {
+
+    public static void setCurrentActiveLevel(Level level) {
         currentActiveLevel = level;
     }
 
-    public static LevelBuilder getLevelBuilder()
-    {
+    public static LevelBuilder getLevelBuilder() {
         return levelBuilder;
     }
 }

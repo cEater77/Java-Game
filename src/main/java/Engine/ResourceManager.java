@@ -36,14 +36,12 @@ public class ResourceManager {
             // Lade die Bilddatei in ein buffer
             IntBuffer widthBuffer = stack.mallocInt(1), heightBuffer = stack.mallocInt(1), channelBuffer = stack.mallocInt(1);
             STBImage.nstbi_set_flip_vertically_on_load(1);
-            imageBuffer = STBImage.stbi_load(getResourcePath("assets/texture/texture_atlas.png"), widthBuffer, heightBuffer, channelBuffer, 4);
+            imageBuffer = STBImage.stbi_load("src/main/resources/assets/texture/texture_atlas.png", widthBuffer, heightBuffer, channelBuffer, 4);
             if (imageBuffer == null) {
                 throw new RuntimeException("Failed to load texture atlas");
             }
             width = widthBuffer.get();
             height = heightBuffer.get();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
 
         // erstelle eine OpenGL texture
@@ -62,7 +60,7 @@ public class ResourceManager {
         GL33.glBindTexture(GL33.GL_TEXTURE_2D, 0);
 
         // Lade die subtexturen, wie Blocktexturen oder Spielerframes, von der JSON datei, rein.
-        JSONArray textureDefs = new JSONObject(getStringFromFile("assets/texture/texture_defs.json")).getJSONArray("textures");
+        JSONArray textureDefs = new JSONObject(getStringFromFile("src/main/resources/assets/texture/texture_defs.json")).getJSONArray("textures");
         for (int i = 0; i < textureDefs.length(); i++) {
             JSONObject texture = textureDefs.getJSONObject(i);
             JSONObject texturePlace = texture.getJSONObject("frame");
@@ -94,34 +92,10 @@ public class ResourceManager {
 
     private static String getStringFromFile(String path) {
         try {
-            path = getResourcePath(path);
             return new String(Files.readAllBytes(Paths.get(path)));
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
-
-    public static String getResourcePath(String resourcePath) throws IOException {
-        Path filePath = Paths.get(resourcePath);
-
-        // Check if the file exists normally on disk
-        if (Files.exists(filePath)) {
-            return filePath.toAbsolutePath().toString();
-        }
-
-        // Otherwise, try to load it from inside the JAR
-        InputStream inputStream = ResourceManager.class.getClassLoader().getResourceAsStream(resourcePath);
-        if (inputStream == null) {
-            throw new IOException("Resource not found: " + resourcePath);
-        }
-
-        // Extract resource to a temporary file
-        Path tempFile = Files.createTempFile("temp_texture", ".png");
-        Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
-        inputStream.close();
-
-        return tempFile.toAbsolutePath().toString();
-    }
-
 }
