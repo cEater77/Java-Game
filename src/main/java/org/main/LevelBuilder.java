@@ -10,15 +10,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 
 public class LevelBuilder {
 
-    private List<Level> levels = new ArrayList<>();
+    private final List<Level> levels = new ArrayList<>();
 
-    private Renderer renderer;
-    private ResourceManager resourceManager;
-    private UIManager uiManager;
+    private final Renderer renderer;
+    private final ResourceManager resourceManager;
+    private final UIManager uiManager;
 
     LevelBuilder(Renderer renderer, ResourceManager resourceManager, UIManager uiManager) {
         this.renderer = renderer;
@@ -65,22 +66,13 @@ public class LevelBuilder {
         }
     }
 
-    public void loadAllLevelsInDirectory(Path directoryPath)
-    {
-        File directory = new File(String.valueOf(directoryPath));
-        if (directory.exists() && directory.isDirectory()) {
-            File[] files = directory.listFiles();
-
-            if (files != null) {
-                for (File file : files) {
-                    String fileString = file.toString();
-                    if (file.isFile() && fileString.substring(fileString.indexOf(".")).equals(".bin")) {
-                        loadLevel(file.toPath());
-                    }
-                }
+    public void loadAllLevelsInDirectory(Path directoryPath) {
+        if (Files.exists(directoryPath) && Files.isDirectory(directoryPath)) {
+            try (Stream<Path> walk = Files.walk(directoryPath)){
+                walk.filter(path -> path.toString().endsWith(".bin")).forEach(this::loadLevel);
+            }catch (IOException e){
+                System.out.println("The provided path is not a valid directory.");
             }
-        } else {
-            System.out.println("The provided path is not a valid directory.");
         }
     }
 
@@ -95,7 +87,7 @@ public class LevelBuilder {
 
     public void saveLevel(Level level) {
         List<GameObject> gameObjects = level.getGameObjects();
-        String filePath = "GameData/levels/" + level.getName() + ".bin";
+        String filePath = "res/GameData/levels/" + level.getName() + ".bin";
         try (DataOutputStream stream = new DataOutputStream(Files.newOutputStream(Paths.get(filePath)))) {
             stream.writeInt(gameObjects.size());
             for (GameObject gameObject : gameObjects) {

@@ -9,6 +9,7 @@ import org.joml.*;
 import org.main.GameObjects.*;
 import org.main.screens.StartScreen;
 
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
@@ -25,7 +26,7 @@ public class Game {
     private ResourceManager resourceManager;
     private Renderer renderer;
 
-    public void init() {
+    public void init() throws IOException {
         System.out.println("Initializing Game");
 
         window = new Window(800, 800, "Java Game");
@@ -42,7 +43,7 @@ public class Game {
         // die levelen diese auch laden können
         registerBlocks();
 
-        levelBuilder.loadAllLevelsInDirectory(Paths.get("GameData/Levels"));
+        levelBuilder.loadAllLevelsInDirectory(Paths.get("res/GameData/Levels"));
 
         uiManager.pushScreen(new StartScreen());
     }

@@ -22,17 +22,19 @@ public class Window {
     private float timePassedInSec;
     private long frameBeginSec;
 
+    private int monitorWidth, monitorHeigt;
+
     private int fps;
     private float lastFrameDurationSec;
 
     private boolean isFullScreen = false;
 
     public int getWidth() {
-        return width;
+        return isFullScreen? monitorWidth : width;
     }
 
     public int getHeight() {
-        return height;
+        return isFullScreen? monitorHeigt : height;
     }
 
     public String getTitle() {
@@ -139,6 +141,8 @@ public class Window {
             long monitor = glfwGetPrimaryMonitor();
             GLFWVidMode videoMode = glfwGetVideoMode(monitor);
             glfwSetWindowMonitor(nativeWindow, monitor, 0, 0, videoMode.width(), videoMode.height(), videoMode.refreshRate());
+            monitorWidth = videoMode.width();
+            monitorHeigt = videoMode.height();
             viewportWidth = videoMode.width();
             viewportHeight = videoMode.height();
         } else {

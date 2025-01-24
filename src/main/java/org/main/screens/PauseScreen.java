@@ -16,9 +16,9 @@ public class PauseScreen implements IScreen{
 
     @Override
     public void render() {
-        ImGui.begin("pause screen", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoBackground);
         ImGui.setNextWindowSize(new ImVec2(0.0f, 0.0f));
-        ImGui.setNextWindowSize(new ImVec2(width, height));
+        ImGui.setNextWindowSize(new ImVec2(width + 10, height + 10));
+        ImGui.begin("pause screen", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoBackground);
 
         ImVec2 windowSize = ImGui.getWindowSize();
         ImGui.setCursorPos(new ImVec2(windowSize.x / 2.0f, windowSize.y / 2.0f));

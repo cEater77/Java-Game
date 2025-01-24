@@ -2,6 +2,7 @@ package org.main.screens;
 
 import imgui.ImGui;
 import imgui.ImVec2;
+import imgui.flag.ImGuiCond;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImInt;
 import imgui.type.ImString;
@@ -46,9 +47,9 @@ public class StartScreen implements IScreen {
     @Override
     public void render() {
 
-        ImGui.begin("StartScreen", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoMove);
-        ImGui.setNextWindowSize(new ImVec2(0.0f, 0.0f));
-        ImGui.setNextWindowSize(new ImVec2(width, height));
+        ImGui.setNextWindowSize(new ImVec2(0.0f, 0.0f), ImGuiCond.Always);
+        ImGui.setNextWindowSize(new ImVec2(width + 10, height + 10), ImGuiCond.Always);
+        ImGui.begin("StartScreen", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoSavedSettings);
 
         ImGui.text("Willkommenstext...");
         if (playernamelength > 0) {

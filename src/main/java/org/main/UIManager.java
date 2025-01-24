@@ -20,6 +20,7 @@ public class UIManager {
         ImGui.createContext();
         glfwImpl.init(Game.getWindow().getNativeWindow(), true);
         glImpl.init("#version 330");
+        ImGui.getIO().setIniFilename(null);
     }
 
     public void update() {
