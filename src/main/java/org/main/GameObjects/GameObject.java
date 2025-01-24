@@ -11,15 +11,18 @@ public class GameObject {
     protected Vector3f position = new Vector3f();
     protected AABB aabb = new AABB();
     protected AnimationController animationController = new AnimationController();
+    // isHighlighted wird in EditorScreen verwendet, um zu sehen, welcher Block momentan ausgewählt ist.
     protected boolean isHighlighted = false;
     protected float collisionSizeMultiplier = 0.5f;
+    protected boolean ignoreCollision;
 
-    public GameObject(Vector3f position) {
+    public GameObject(Vector3f position, boolean ignoreCollision) {
         this.position = position;
         this.aabb = new AABB(
                 new Vector2f(position.x - collisionSizeMultiplier, position.y - collisionSizeMultiplier),
                 new Vector2f(position.x + collisionSizeMultiplier, position.y + collisionSizeMultiplier)
         );
+        this.ignoreCollision = ignoreCollision;
     }
 
     public GameObject() {
@@ -77,6 +80,11 @@ public class GameObject {
     public boolean isHighlighted()
     {
         return isHighlighted;
+    }
+
+    public boolean ignoresCollision()
+    {
+        return ignoreCollision;
     }
 
     public void serialize(DataOutputStream stream) throws IOException {

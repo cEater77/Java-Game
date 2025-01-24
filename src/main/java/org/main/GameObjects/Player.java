@@ -4,8 +4,7 @@ import Engine.ResourceManager;
 import Engine.animation.Animation;
 import Engine.animation.AnimationController;
 import Engine.renderer.Texture;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
+import org.joml.*;
 import org.main.Game;
 import org.main.MovementDirection;
 
@@ -28,18 +27,13 @@ public class Player extends GameObject {
     }
 
     public Player(Vector3f position, ResourceManager resourceManager) {
-        super(position);
+        super(position, false);
         setupAnimations(resourceManager);
-    }
-
-    public Player(ResourceManager resourceManager) {
-        super(new Vector3f(0.0f, 0.0f, 1.0f));
-        setupAnimations(resourceManager);
+        collisionSizeMultiplier = 0.3f;
     }
 
     @Override
     public void update() {
-        collisionSizeMultiplier = 0.3f;
         super.update();
         animationController.setDirection(direction);
     }
@@ -54,9 +48,11 @@ public class Player extends GameObject {
         switch (other.getGameObjectType()) {
             case BLOCK: {
                 Block block = (Block)other;
-                if (block.ignoresCollision() || block.getBlockType() == Block.BlockTypeID.FINISH) return;
+                if (block.getBlockType() == Block.BlockTypeID.FINISH) return;
+                // verhindert das der Spieler in bestimmten Blocktypen hereingeht bzw er wird heraus geschubst.
                 Vector2f offset = aabb.getMinTranslationVector(other.getAABB());
                 setPosition(new Vector3f(-offset.x + position.x, -offset.y + position.y, position.z));
+                update();
             }
         }
     }
@@ -81,9 +77,9 @@ public class Player extends GameObject {
                     playerPositionDelta.y -= speed;
                     break;
             }
-
         }
 
+        // verhindert das der spieler sich diagonal schneller bewegt als die "geraden" richtungen.
         if (playerPositionDelta.x != 0.0f || playerPositionDelta.y != 0.0f)
             playerPositionDelta.normalize(speed);
         setPosition(new Vector3f(playerPositionDelta.x + position.x, playerPositionDelta.y + position.y, 1.0f));

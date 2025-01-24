@@ -12,8 +12,6 @@ public class Texture {
     public Vector2f uvPosition;
     public Vector2f uvSize;
 
-    public static final int DEFAULT_TEXTURE_WIDTH = 32;
-    public static final int DEFAULT_TEXTURE_HEIGHT = 32;
     public static final Texture EMPTY_TEXTURE = new Texture(new Vector2f(0.0f, 0.0f), new Vector2f(0.0f,0.0f));
 
 }

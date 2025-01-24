@@ -2,11 +2,7 @@ package org.main;
 
 import Engine.ResourceManager;
 import Engine.renderer.Renderer;
-import org.joml.Vector3f;
-import org.main.GameObjects.Block;
-import org.main.GameObjects.GameObject;
-import org.main.GameObjects.GameObjectType;
-import org.main.GameObjects.Player;
+import org.main.GameObjects.*;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -30,9 +26,10 @@ public class LevelBuilder {
         this.uiManager = uiManager;
     }
 
+    // wurde verwendet als wir die levels erstellt haben, im Base-Game hat es keinen nutzen
     public void createLevel(String levelName)
     {
-        Level level = new Level(renderer, resourceManager, uiManager, levelName);
+        Level level = new Level(renderer, uiManager, levelName);
         level.addGameObject(new Player(level.getPlayerStartPosition(), resourceManager));
         levels.add(level);
     }
@@ -41,14 +38,15 @@ public class LevelBuilder {
         String fileName = levelPath.getFileName().toString();
         fileName = fileName.substring(0, fileName.length() - 4);
         try (DataInputStream stream = new DataInputStream(Files.newInputStream(levelPath))) {
-            Level level = new Level(renderer, resourceManager, uiManager, fileName);
+            Level level = new Level(renderer, uiManager, fileName);
             int gameObjectCount = stream.readInt();
             for (int i = 0; i < gameObjectCount; i++) {
+
                 GameObjectType type = GameObjectType.values()[stream.readInt()];
                 GameObject gameObject;
                 switch (type) {
                     case PLAYER:
-                        gameObject = new Player(resourceManager);
+                        gameObject = new Player(level.getPlayerStartPosition(),resourceManager);
                         break;
                     case BLOCK:
                         gameObject = new Block();
@@ -56,6 +54,7 @@ public class LevelBuilder {
                     default:
                         throw new IllegalStateException("Unknown type of GameObject was loaded in file");
                 }
+
                 gameObject.deserialize(stream);
                 gameObject.update();
                 level.addGameObject(gameObject);

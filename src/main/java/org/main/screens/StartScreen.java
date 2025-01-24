@@ -1,11 +1,13 @@
 package org.main.screens;
 
 import imgui.ImGui;
+import imgui.ImVec2;
+import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImInt;
 import imgui.type.ImString;
 import org.main.Game;
+import org.main.Level;
 
-import java.beans.Visibility;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,7 +15,6 @@ public class StartScreen implements IScreen {
 
     ImString playername = new ImString();
     Integer playernamelength = 0;
-    List<String> levelNames = Arrays.asList("Level auswählen", "Tutorial", "Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6", "Level 7", "Level 8", "Level 9", "Level 10", "Level generieren");
     boolean timeractive; //wenn true ist muss Timer aktiviert werden
     int z = 0; //für timer
     boolean ranglisteactive;
@@ -24,6 +25,9 @@ public class StartScreen implements IScreen {
     List<String> ranglistePosition = Arrays.asList("1. ", "2. ", "3. ", "4. ", "5. ", "6. ", "7. ", "8. ", "9. ", "10. ");
 
     int[] visibilty = {80};
+
+    int width, height;
+    ImInt levelIndex = new ImInt(0);
 
     public enum Schwierigkeit {
         EINFACH,
@@ -41,7 +45,10 @@ public class StartScreen implements IScreen {
 
     @Override
     public void render() {
-        ImGui.begin("StartScreen");
+
+        ImGui.begin("StartScreen", ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoMove);
+        ImGui.setNextWindowSize(new ImVec2(0.0f, 0.0f));
+        ImGui.setNextWindowSize(new ImVec2(width, height));
 
         ImGui.text("Willkommenstext...");
         if (playernamelength > 0) {
@@ -57,16 +64,16 @@ public class StartScreen implements IScreen {
         ImGui.setNextItemWidth(ImGui.getWindowSizeX()/3);
         ImGui.inputTextWithHint("##SpielerNameEingabe", "Spielername eingeben", playername);
         playernamelength = playername.getLength();
-        //if(ImGui.getWindowSizeX() >= 400){ ImGui.sameLine(280); ImGui.text("Hallo");}
-        String[] temp = new String[levelNames.size()];
-        for (int i = 0; i < levelNames.size(); i++) temp[i] = levelNames.get(i);
         ImGui.sameLine(ImGui.getWindowSizeX()/3*2+8);
         ImGui.setNextItemWidth(ImGui.getWindowSizeX()/3);
-        ImGui.combo("Levels", new ImInt(0), temp);
+
+        List<Level> levels = Game.getLevelBuilder().getAllLevels();
+        String[] levelNames = new String[levels.size()];
+        for(int i = 0; i < levelNames.length; i++)levelNames[i] = levels.get(i).getName();
+        ImGui.combo("Levels",levelIndex, levelNames);
 
         ImGui.text("" + ImGui.getWindowSizeX());
 
-        ImGui.text("");
         ImGui.sameLine(0, ImGui.getWindowSizeX() - ((ImGui.getWindowSizeX()-10)/3));
         ImGui.text("Schwierigkeit:");
 
@@ -174,22 +181,19 @@ public class StartScreen implements IScreen {
             }
         }
 
-
-
-
-
-
-        // String[] temp = new String[levelNames.size()];
-        //ImGui.sameLine();ImGui.combo("Levels", new ImInt(0), temp);
-
         if (ImGui.button("Start Game"))
-            Game.getUiManager().pushScreen(new HUDScreen());
+        {
+            Game.setCurrentActiveLevel(levels.get(levelIndex.get()));
+            Game.getUiManager().popScreen();
+        }
+
         ImGui.end();
     }
 
     @Override
     public void resize(int width, int height) {
-
+        this.width = width;
+        this.height = height;
     }
 
     @Override

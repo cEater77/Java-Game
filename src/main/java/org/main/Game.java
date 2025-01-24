@@ -1,28 +1,29 @@
 package org.main;
 
 import Engine.*;
-import Engine.animation.Animation;
 import Engine.animation.AnimationController;
 import Engine.renderer.Renderer;
-import Engine.renderer.Texture;
 import imgui.ImGui;
 import imgui.flag.ImGuiKey;
-import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
-import org.main.GameObjects.Block;
-import org.main.GameObjects.GameObjectType;
-import org.main.GameObjects.Player;
+import org.joml.*;
+import org.main.GameObjects.*;
+import org.main.screens.StartScreen;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class Game {
+
+    private static Window window;
+    private static BlockRegistry blockRegistry;
+    private static UIManager uiManager;
+    private static Level currentActiveLevel;
+    private static LevelBuilder levelBuilder;
+
+    private ResourceManager resourceManager;
+    private Renderer renderer;
 
     public void init() {
         System.out.println("Initializing Game");
@@ -37,10 +38,13 @@ public class Game {
         levelBuilder = new LevelBuilder(renderer, resourceManager, uiManager);
         blockRegistry = new BlockRegistry();
 
+        // Alle Blöcke die im Spiel verwendet werden, müssen registriert werden bevor das eigentliche spiel angefängt, damit
+        // die levelen diese auch laden können
         registerBlocks();
 
         levelBuilder.loadAllLevelsInDirectory(Paths.get("GameData/Levels"));
-        currentActiveLevel = levelBuilder.getLevel("Level1");
+
+        uiManager.pushScreen(new StartScreen());
     }
 
     public void run() {
@@ -49,7 +53,8 @@ public class Game {
         while (!glfwWindowShouldClose(window.getNativeWindow())) {
             window.beginFrame();
 
-            currentActiveLevel.tick();
+            if(currentActiveLevel != null)
+                currentActiveLevel.tick();
 
             handleInput();
             renderer.renderBatch();
@@ -67,7 +72,7 @@ public class Game {
 
     private void registerBlocks() {
         Block woodBlock = new Block(new Vector3f(0.0f), resourceManager, false, Block.BlockTypeID.WOOD);
-        woodBlock.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("dirt"))));
+        woodBlock.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("smooth_wood"))));
 
         blockRegistry.registerBlock(woodBlock);
 
@@ -76,8 +81,33 @@ public class Game {
 
         blockRegistry.registerBlock(darkWoodBlock);
 
+        Block grass = new Block(new Vector3f(0.0f), resourceManager, true, Block.BlockTypeID.GRASS);
+        grass.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("grass"))));
+
+        blockRegistry.registerBlock(grass);
+
+        Block smoothStone = new Block(new Vector3f(0.0f), resourceManager, false, Block.BlockTypeID.SMOOTH_STONE);
+        smoothStone.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("smooth_stone"))));
+
+        blockRegistry.registerBlock(smoothStone);
+
+        Block chiseledStone = new Block(new Vector3f(0.0f), resourceManager, true, Block.BlockTypeID.CHISELED_STONE);
+        chiseledStone.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("chiseled_stone"))));
+
+        blockRegistry.registerBlock(chiseledStone);
+
+        Block whiteLog = new Block(new Vector3f(0.0f), resourceManager, false, Block.BlockTypeID.WHITE_LOG);
+        whiteLog.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("white_log"))));
+
+        blockRegistry.registerBlock(whiteLog);
+
+        Block halfStone = new Block(new Vector3f(0.0f), resourceManager, false, Block.BlockTypeID.HALF_STONE);
+        halfStone.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("half_stone"))));
+
+        blockRegistry.registerBlock(halfStone);
+
         Block finishBlock = new Block(new Vector3f(0.0f), resourceManager, false, Block.BlockTypeID.FINISH);
-        finishBlock.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("dark_log"))));
+        finishBlock.setAnimationController(new AnimationController(Arrays.asList(resourceManager.getTexture("finish"))));
         finishBlock.setCollisionCallback((block,other) ->
         {
             if(other.getGameObjectType() == GameObjectType.PLAYER)
@@ -89,11 +119,6 @@ public class Game {
         });
 
         blockRegistry.registerBlock(finishBlock);
-
-        Block barrierBlock = new Block(new Vector3f(0.0f), resourceManager, false, Block.BlockTypeID.BARRIER);
-        barrierBlock.setAnimationController(new AnimationController());
-
-        blockRegistry.registerBlock(barrierBlock);
     }
 
     private void handleInput()
@@ -136,24 +161,5 @@ public class Game {
     public static LevelBuilder getLevelBuilder()
     {
         return levelBuilder;
-    }
-
-    private static Window window;
-    private static BlockRegistry blockRegistry;
-    private static UIManager uiManager;
-    private static Level currentActiveLevel;
-    private static LevelBuilder levelBuilder;
-
-    private ResourceManager resourceManager;
-    private Renderer renderer;
-
-    private GameState gamestate;
-
-    private enum GameState {
-        START_MENU,
-        SELECTION,
-        PAUSE_MENU,
-        IN_GAME,
-        LEVEL_COMPLETE
     }
 }

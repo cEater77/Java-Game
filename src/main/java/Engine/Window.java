@@ -4,16 +4,28 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL33;
-import org.lwjgl.opengl.GL33;
-import org.lwjgl.system.MemoryStack;
-
-import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class Window {
+
+    private int width, height;
+    private int xPosition, yPosition;
+    private String title;
+    private static long nativeWindow;
+
+    private int viewportWidth, viewportHeight;
+
+    private int currentFrameCount;
+    private float timePassedInSec;
+    private long frameBeginSec;
+
+    private int fps;
+    private float lastFrameDurationSec;
+
+    private boolean isFullScreen = false;
 
     public int getWidth() {
         return width;
@@ -27,7 +39,7 @@ public class Window {
         return title;
     }
 
-    public long getNativeWindow() {
+    public static long getNativeWindow() {
         return nativeWindow;
     }
 
@@ -41,8 +53,8 @@ public class Window {
         if ( !glfwInit() )
             throw new IllegalStateException("Unable to initialize GLFW");
 
-        // Configure GLFW
-        glfwDefaultWindowHints(); // optional, the current window hints are already the default
+        // konfiguriere GLFW
+        glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
@@ -83,6 +95,9 @@ public class Window {
 
     public void endFrame()
     {
+        // falls Fullscreen, wollen wir die Werte wie größe und Position nicht überschreiben, damit wir den Fenster
+        // wieder in sein alten zustand bringen können, falls der nutzer Fullscreen wieder ausschaltet.
+
         if(!isFullScreen)
         {
             int[] temp_width = new int[1], temp_height = new int[1], temp_x = new int[1], temp_y = new int[1];
@@ -96,8 +111,8 @@ public class Window {
             viewportHeight = height;
         }
 
+        // brechnet FPS
         timePassedInSec += lastFrameDurationSec;
-        totalGameTimeInSec += lastFrameDurationSec;
         currentFrameCount++;
         if(timePassedInSec > 1.0f)
         {
@@ -130,21 +145,4 @@ public class Window {
             glfwSetWindowMonitor(nativeWindow, 0, xPosition, yPosition, width, height, 0);
         }
     }
-
-    private int width, height;
-    private int xPosition, yPosition;
-    private String title;
-    public static long nativeWindow;
-
-    private int viewportWidth, viewportHeight;
-
-    private int currentFrameCount;
-    private float timePassedInSec;
-    private long frameBeginSec;
-
-    private int fps;
-    private float lastFrameDurationSec;
-    private float totalGameTimeInSec;
-
-    private boolean isFullScreen = false;
 }

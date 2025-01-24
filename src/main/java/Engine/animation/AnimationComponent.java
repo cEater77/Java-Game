@@ -1,9 +1,5 @@
 package Engine.animation;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 public class AnimationComponent {
 
     private float elapsedTime = 0;
@@ -15,11 +11,6 @@ public class AnimationComponent {
     public AnimationComponent(float duration, boolean shouldLoop) {
         this.duration = duration;
         this.shouldLoop = shouldLoop;
-    }
-
-    public AnimationComponent()
-    {
-
     }
 
     public void update(float deltaTime) {

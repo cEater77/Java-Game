@@ -15,31 +15,25 @@ public class Shader {
     private final int programID;
     private Map<String, Integer> unifromLocationCache = new HashMap<>();
 
-    // Constructor accepts the source code of the vertex and fragment shaders
     public Shader(String vertexSource, String fragmentSource) {
-        // Compile shaders and link the program
 
         int vertexShaderID = compileShader(vertexSource, GL33.GL_VERTEX_SHADER);
         int fragmentShaderID = compileShader(fragmentSource, GL33.GL_FRAGMENT_SHADER);
 
-        // Create the program and link shaders to it
         programID = GL33.glCreateProgram();
         GL33.glAttachShader(programID, vertexShaderID);
         GL33.glAttachShader(programID, fragmentShaderID);
         GL33.glLinkProgram(programID);
 
-        // Check for program linking errors
         if (GL33.glGetProgrami(programID, GL33.GL_LINK_STATUS) == GL33.GL_FALSE) {
             String infoLog = GL33.glGetProgramInfoLog(programID);
             throw new RuntimeException("Error linking shader program: " + infoLog);
         }
 
-        // Clean up the shader objects as they are now linked to the program
         GL33.glDeleteShader(vertexShaderID);
         GL33.glDeleteShader(fragmentShaderID);
     }
 
-    // Helper function to compile individual shaders (vertex or fragment)
     private int compileShader(String source, int type) {
         int shaderID = GL33.glCreateShader(type);
         GL33.glShaderSource(shaderID, source);
@@ -52,7 +46,6 @@ public class Shader {
         return shaderID;
     }
 
-    // Activate the shader program for rendering
     public void use() {
         GL33.glUseProgram(programID);
     }
@@ -71,7 +64,6 @@ public class Shader {
         GL33.glUniform1i(unifromLocationCache.get(name), value);
     }
 
-    // Set a float uniform variable
     public void setUniform(String name, float value) {
         if(!unifromLocationCache.containsKey(name)) {
             int location = GL33.glGetUniformLocation(programID, name);
@@ -85,7 +77,6 @@ public class Shader {
         GL33.glUniform1f(unifromLocationCache.get(name), value);
     }
 
-    // Set a 4x4 matrix uniform
     public void setUniform(String name, Matrix4f matrix) {
         if(!unifromLocationCache.containsKey(name)) {
             int location = GL33.glGetUniformLocation(programID, name);
@@ -150,14 +141,12 @@ public class Shader {
         GL33.glUniform2f(unifromLocationCache.get(name), value.x, value.y);
     }
 
-    // Clean up the shader program
     public void delete() {
         if (programID != 0) {
             GL33.glDeleteProgram(programID);
         }
     }
 
-    // Get the program ID (useful for debugging or other purposes)
     private int getProgramID() {
         return programID;
     }

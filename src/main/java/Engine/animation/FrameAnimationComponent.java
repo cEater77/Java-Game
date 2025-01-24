@@ -1,14 +1,9 @@
 package Engine.animation;
 
 import Engine.renderer.Texture;
-import org.joml.Vector2f;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class FrameAnimationComponent extends AnimationComponent {
 
@@ -18,9 +13,6 @@ public class FrameAnimationComponent extends AnimationComponent {
     public FrameAnimationComponent(List<Texture> frames, float duration, boolean shouldLoop) {
         super(duration, shouldLoop);
         this.frames = frames;
-    }
-
-    public FrameAnimationComponent() {
     }
 
     @Override

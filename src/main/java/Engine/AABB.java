@@ -37,6 +37,7 @@ public class AABB {
                 (this.min.y < other.max.y && this.max.y > other.min.y);
     }
 
+    // gibt ein wert zurück, der sagt wie sehr die AABBs ineinander drinne sind.
     public Vector2f getMinTranslationVector(AABB other) {
         
         float overlapX = Math.min(this.max.x, other.max.x) - Math.max(this.min.x, other.min.x);

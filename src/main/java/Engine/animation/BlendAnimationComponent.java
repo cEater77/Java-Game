@@ -1,9 +1,9 @@
 package Engine.animation;
 
 public class BlendAnimationComponent extends AnimationComponent{
-    float fromAlpha;
-    float toAlpha;
-    float currentAlpha = 0;
+    private float fromAlpha;
+    private float toAlpha;
+    private float currentAlpha = 0;
 
     public BlendAnimationComponent(float fromAlpha, float toAlpha, float duration, boolean shouldLoop)
     {

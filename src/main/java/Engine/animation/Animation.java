@@ -3,9 +3,6 @@ package Engine.animation;
 import Engine.renderer.Texture;
 import org.joml.Vector3f;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 public class Animation {
@@ -13,12 +10,6 @@ public class Animation {
     private PositionAnimationComponent positionAnimationComponent;
     private FrameAnimationComponent frameAnimationComponent;
     private BlendAnimationComponent blendAnimationComponent;
-
-    public Animation(PositionAnimationComponent positionAnimationComponent, FrameAnimationComponent frameAnimationComponent, BlendAnimationComponent blendAnimationComponent) {
-        this.positionAnimationComponent = positionAnimationComponent;
-        this.frameAnimationComponent = frameAnimationComponent;
-        this.blendAnimationComponent = blendAnimationComponent;
-    }
 
     public Animation()
     {
@@ -106,7 +97,7 @@ public class Animation {
     {
         if(blendAnimationComponent == null)
             return 1.0f;
-        return blendAnimationComponent.currentAlpha;
+        return blendAnimationComponent.getCurrentAlpha();
     }
 
     public Vector3f getCurrentPositionAnimationData()

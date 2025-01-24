@@ -1,17 +1,12 @@
 package org.main;
 
-import Engine.animation.Animation;
-import Engine.animation.AnimationComponent;
-import Engine.animation.AnimationController;
+import Engine.animation.*;
 import Engine.renderer.Renderer;
 import Engine.ResourceManager;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import org.main.GameObjects.GameObject;
-import org.main.GameObjects.GameObjectType;
-import org.main.GameObjects.Player;
-import org.main.screens.LevelFinishScreen;
-import org.main.screens.PauseScreen;
+import org.main.GameObjects.*;
+import org.main.screens.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,16 +21,13 @@ public class Level {
 
     private AnimationComponent finishAnimation = new AnimationComponent(0.8f, false);
 
-    public boolean useFog = true;
-    public float fogRadius = 10.0f;
+    private boolean useFog = true;
 
     private Renderer renderer;
-    private ResourceManager resourceManager;
     private UIManager uiManager;
 
-    public Level(Renderer renderer, ResourceManager resourceManager, UIManager uiManager, String levelName) {
+    public Level(Renderer renderer, UIManager uiManager, String levelName) {
         this.renderer = renderer;
-        this.resourceManager = resourceManager;
         this.uiManager = uiManager;
 
         this.levelName = levelName;
@@ -45,13 +37,17 @@ public class Level {
 
         if (!isLevelFinished) {
             if (!isLevelPaused) {
+
+                // sortierung der GameObjects ist wichtig, da die Position in der Liste festlegt, ob ein GameObject über einem Anderen
+                // gezeichnet wird. Hier werden GameObjects nach der Welt-Position sortiert.
                 sortGameObjects();
-                gameObjects.forEach(GameObject::update);
+
+                // nötig für die "End-Animation" wenn der spieler gewinnt
                 tileSizeAtStart = Game.getCurrentActiveLevel().getRenderer().getTileSize();
 
                 handleInput();
+                gameObjects.forEach(GameObject::update);
                 handleCollision();
-
 
                 if (uiManager.getCurrentScreen() instanceof PauseScreen) {
                     uiManager.popScreen();
@@ -95,18 +91,25 @@ public class Level {
     }
 
     private void handleCollision() {
-        for (GameObject e : gameObjects) {
-            for (GameObject e2 : gameObjects) {
-                if (e != e2 && e.getAABB().isIntersecting(e2.getAABB())) {
-                    e.onCollision(e2);
-                    e.update();
-                }
+
+        // momentan kann nur der spieler gegen GameObjects kollidieren, deswegen testen wir nur den spieler gegen alles.
+        Player player = getPlayer();
+        for(GameObject gameObject : gameObjects)
+        {
+            if(player != gameObject && player.getAABB().isIntersecting(gameObject.getAABB()) && !gameObject.ignoresCollision())
+            {
+                player.onCollision(gameObject);
+                gameObject.onCollision(player);
             }
         }
     }
 
     public void sortGameObjects()
     {
+        //Ordnung: zuerst sortiert nach z, anschließend nach x + y
+        // x + y, weil die x und y in der Zeichordnung "gleichgewichtet" sein müssen.
+
+
         if(gameObjects.isEmpty())
             return;
 
@@ -199,12 +202,27 @@ public class Level {
         gameObjects.add(gameObject);
     }
 
-    public void removeGameObject(GameObject gameObject) {
-        gameObjects.remove(gameObject);
-    }
 
     public Renderer getRenderer() {
         return renderer;
+    }
+
+    public void setUseFog(boolean useFog) {
+        this.useFog = useFog;
+    }
+
+    public void setFogRadius(float fogRadius) {
+        this.fogRadius = fogRadius;
+    }
+
+    private float fogRadius = 10.0f;
+
+    public boolean isUseFog() {
+        return useFog;
+    }
+
+    public float getFogRadius() {
+        return fogRadius;
     }
 
     public void pause() {
@@ -217,5 +235,13 @@ public class Level {
 
     public boolean isPaused() {
         return isLevelPaused;
+    }
+
+    public void reset()
+    {
+        isLevelFinished = false;
+        getPlayer().setPosition(playerStartPosition);
+        finishAnimation.reset();
+        renderer.setTileSize(tileSizeAtStart);
     }
 }

@@ -32,7 +32,7 @@ public class ResourceManager {
         ByteBuffer imageBuffer;
         int width, height;
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            // Load the image file into a ByteBuffer
+            // Lade die Bilddatei in ein buffer
             IntBuffer widthBuffer = stack.mallocInt(1), heightBuffer = stack.mallocInt(1), channelBuffer = stack.mallocInt(1);
             STBImage.nstbi_set_flip_vertically_on_load(1);
             imageBuffer = STBImage.stbi_load("assets/texture/texture_atlas.png", widthBuffer, heightBuffer, channelBuffer, 4);
@@ -43,22 +43,22 @@ public class ResourceManager {
             height = heightBuffer.get();
         }
 
-        // Generate a new texture ID
+        // erstelle eine OpenGL texture
         textureAtlasID = GL33.glGenTextures();
         GL33.glActiveTexture(GL33.GL_TEXTURE0 + 0);
         GL33.glBindTexture(GL33.GL_TEXTURE_2D, textureAtlasID);
-        // Set texture parameters (wrapping and filtering)
         GL33.glTexParameteri(GL33.GL_TEXTURE_2D, GL33.GL_TEXTURE_WRAP_S, GL33.GL_REPEAT);
         GL33.glTexParameteri(GL33.GL_TEXTURE_2D, GL33.GL_TEXTURE_WRAP_T, GL33.GL_REPEAT);
         GL33.glTexParameteri(GL33.GL_TEXTURE_2D, GL33.GL_TEXTURE_MIN_FILTER, GL33.GL_NEAREST);
         GL33.glTexParameteri(GL33.GL_TEXTURE_2D, GL33.GL_TEXTURE_MAG_FILTER, GL33.GL_NEAREST);
 
-        // Load the image data into the texture
+        // Lade den buffer in die OpenGL texture rein.
         GL33.glTexImage2D(GL33.GL_TEXTURE_2D, 0, GL33.GL_RGBA, width, height, 0, GL33.GL_RGBA, GL33.GL_UNSIGNED_BYTE, imageBuffer);
 
         GL33.glActiveTexture(GL33.GL_TEXTURE0 + 15);
         GL33.glBindTexture(GL33.GL_TEXTURE_2D, 0);
 
+        // Lade die subtexturen, wie Blocktexturen oder Spielerframes, von der JSON datei, rein.
         JSONArray textureDefs = new JSONObject(getStringFromFile("assets/texture/texture_defs.json")).getJSONArray("textures");
         for (int i = 0; i < textureDefs.length(); i++) {
             JSONObject texture = textureDefs.getJSONObject(i);

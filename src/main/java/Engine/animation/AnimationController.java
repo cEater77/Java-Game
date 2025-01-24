@@ -4,10 +4,7 @@ import Engine.renderer.Texture;
 import org.main.Game;
 import org.main.MovementDirection;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class AnimationController {
@@ -43,6 +40,7 @@ public class AnimationController {
         currentDirection = MovementDirection.NONE;
     }
 
+    // falls die Animation nur aus Frames besteht.
     public AnimationController(List<Texture> frames)
     {
         Animation defaultAnim = new Animation();

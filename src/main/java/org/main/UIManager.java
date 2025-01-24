@@ -4,22 +4,22 @@ import imgui.ImGui;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 import imgui.internal.ImGuiContext;
-import org.main.screens.EditorScreen;
-import org.main.screens.IScreen;
-import org.main.screens.InfoScreen;
-import org.main.screens.StartScreen;
+import org.main.screens.*;
 
 import java.util.Stack;
 
 
 public class UIManager {
 
+    private ImGuiContext uiContext;
+    private final ImGuiImplGlfw glfwImpl = new ImGuiImplGlfw();
+    private final ImGuiImplGl3 glImpl = new ImGuiImplGl3();
+    private Stack<IScreen> screens = new Stack<IScreen>();
+
     public UIManager() {
         ImGui.createContext();
         glfwImpl.init(Game.getWindow().getNativeWindow(), true);
         glImpl.init("#version 330");
-        pushScreen(new InfoScreen());
-        pushScreen(new EditorScreen());
     }
 
     public void update() {
@@ -39,8 +39,6 @@ public class UIManager {
             }
         }
 
-        ImGui.showDemoWindow();
-
         ImGui.render();
         glImpl.renderDrawData(ImGui.getDrawData());
     }
@@ -51,16 +49,16 @@ public class UIManager {
     }
 
     public void popScreen() {
-        IScreen screen = screens.pop();
-        screen.onExit();
+        if (!screens.isEmpty()) {
+            IScreen screen = screens.pop();
+            screen.onExit();
+        }
     }
 
     public IScreen getCurrentScreen() {
+        if (screens.isEmpty())
+            return null;
+
         return screens.peek();
     }
-
-    private ImGuiContext uiContext;
-    private final ImGuiImplGlfw glfwImpl = new ImGuiImplGlfw();
-    private final ImGuiImplGl3 glImpl = new ImGuiImplGl3();
-    private Stack<IScreen> screens = new Stack<IScreen>();
 }

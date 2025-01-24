@@ -2,23 +2,17 @@ package org.main.screens;
 
 import imgui.ImGui;
 import imgui.flag.ImGuiKey;
-import imgui.type.ImFloat;
-import imgui.type.ImInt;
-import imgui.type.ImString;
+import imgui.type.*;
 import org.joml.Vector3f;
 import org.main.Game;
-import org.main.GameObjects.Block;
-import org.main.GameObjects.GameObject;
-import org.main.GameObjects.GameObjectType;
+import org.main.GameObjects.*;
 import org.main.Level;
-import org.main.LevelBuilder;
+//import org.main.LevelBuilder;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
-import java.util.stream.Collectors;
 
 public class EditorScreen implements IScreen {
 
@@ -28,14 +22,13 @@ public class EditorScreen implements IScreen {
     private boolean shouldPlaceAfterPosChange = false;
     private boolean positionChanged = false;
 
-    private GameObject selectUpToGameObject;
-
     private Stack<Action> undoActions = new Stack<>();
     private Stack<Action> redoActions = new Stack<>();
 
     private float[] tileSize = new float[1];
 
     private ImInt index = new ImInt(0);
+
     private ImInt levelIndex = new ImInt(0);
     private ImString levelName = new ImString();
 
@@ -72,7 +65,7 @@ public class EditorScreen implements IScreen {
         if (ImGui.button("Go to start screen"))
             Game.getUiManager().pushScreen(new StartScreen());
 
-        if(ImGui.button("New Level"))
+        /*if(ImGui.button("New Level"))
         {
             LevelBuilder levelBuilder = Game.getLevelBuilder();
             levelBuilder.createLevel(levelName.get());
@@ -88,14 +81,14 @@ public class EditorScreen implements IScreen {
         String[] levelNames = new String[levels.size()];
         for(int i = 0; i < levelNames.length; i++)levelNames[i] = levels.get(i).getName();
         ImGui.combo("Levels",levelIndex, levelNames);
-        Game.setCurrentActiveLevel(Game.getLevelBuilder().getAllLevels().get(levelIndex.get()));
+        Game.setCurrentActiveLevel(Game.getLevelBuilder().getAllLevels().get(levelIndex.get()));*/
 
-        if(ImGui.radioButton("Toggle Fog", Game.getCurrentActiveLevel().useFog))
+        if(ImGui.radioButton("Toggle Fog", Game.getCurrentActiveLevel().isUseFog()))
         {
-            Game.getCurrentActiveLevel().useFog =  !Game.getCurrentActiveLevel().useFog;
+            Game.getCurrentActiveLevel().setUseFog(!Game.getCurrentActiveLevel().isUseFog());
         }
         ImGui.sliderFloat("Fog Radius", fogRadius, 1.0f, 50.0f);
-        Game.getCurrentActiveLevel().fogRadius = fogRadius[0];
+        Game.getCurrentActiveLevel().setFogRadius(fogRadius[0]);
 
         ImFloat x = new ImFloat(currentPos.x), y = new ImFloat(currentPos.y), z = new ImFloat(currentPos.z);
         ImGui.inputFloat("x", x, 1.0f);
@@ -170,9 +163,7 @@ public class EditorScreen implements IScreen {
                         int startIndex = Math.min(gameObjects.indexOf(startSelectedGameObject), gameObjects.indexOf(gameObject));
                         int endIndex = Math.max(gameObjects.indexOf(startSelectedGameObject), gameObjects.indexOf(gameObject));
 
-                        List<GameObject> gameObjectsToBeSelected = gameObjects.subList(startIndex, endIndex + 1)
-                                .stream().filter(g -> !selectedGameObjects.contains(g))
-                                .collect(Collectors.toList());
+                        List<GameObject> gameObjectsToBeSelected = getAllGameObjectsInbetween(startIndex, endIndex);
 
                         selectedGameObjects.addAll(gameObjectsToBeSelected);
                         addToUndo(gameObjectsToBeSelected, ActionType.SELECTED);
@@ -297,5 +288,30 @@ public class EditorScreen implements IScreen {
     {
         undoActions.push(new Action(data, actionType));
         while (!redoActions.isEmpty()) redoActions.pop();
+    }
+
+    private List<GameObject> getAllGameObjectsInbetween(int startIndex, int endIndex)
+    {
+        List<GameObject> gameObjects = Game.getCurrentActiveLevel().getGameObjects();
+
+        if(endIndex == startIndex) {
+            GameObject gameObject = gameObjects.get(startIndex);
+            if(!selectedGameObjects.contains(gameObjects.get(startIndex))) {
+
+                return new ArrayList<>(Arrays.asList(gameObject));
+            }
+            else {
+                return new ArrayList<>();
+            }
+        }
+
+        List<GameObject> gameObjectsToBeSelected = getAllGameObjectsInbetween(startIndex + 1, endIndex);
+        GameObject gameObject = gameObjects.get(startIndex);
+        if(!selectedGameObjects.contains(gameObject))
+        {
+            gameObjectsToBeSelected.add(gameObject);
+        }
+
+        return gameObjectsToBeSelected;
     }
 }

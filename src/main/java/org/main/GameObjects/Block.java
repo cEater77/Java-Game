@@ -3,7 +3,6 @@ package org.main.GameObjects;
 import Engine.AABB;
 import Engine.ResourceManager;
 import Engine.animation.AnimationController;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.main.Game;
 
@@ -11,24 +10,29 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 
 public class Block extends GameObject {
 
-    private boolean ignoreCollision;
     private BlockTypeID typeID;
+
+    // collisionCallback wird verwendet, da verschiedene Blocktypen verschiedene Reaktion auf Kollisionen haben können
+    // und wir deswegen nicht extra eine Klasse erstellen wollen.
     private BiConsumer<Block, GameObject> collisionCallback;
 
     public enum BlockTypeID {
         WOOD,
         DARK_WOOD,
         FINISH,
-        BARRIER
+        GRASS,
+        SMOOTH_STONE,
+        WHITE_LOG,
+        CHISELED_STONE,
+        HALF_STONE
     }
 
     public Block(Vector3f position, ResourceManager resourceManager, boolean ignoreCollision, BlockTypeID typeID) {
-        super(position);
+        super(position, ignoreCollision);
         this.ignoreCollision = ignoreCollision;
         this.typeID = typeID;
     }
@@ -54,9 +58,6 @@ public class Block extends GameObject {
 
     @Override
     public void onCollision(GameObject other) {
-        if (ignoreCollision)
-            return;
-
         super.onCollision(other);
 
         if(collisionCallback != null)
